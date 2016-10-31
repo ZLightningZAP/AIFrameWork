@@ -124,11 +124,23 @@ void SceneText::Init()
 	//AI Load Image
 	MeshBuilder::GetInstance()->GenerateQuad("Background", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Background")->textureID = LoadTGA("Image//RoomLayout.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Male", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Male")->textureID = LoadTGA("Image//Male.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Female", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Female")->textureID = LoadTGA("Image//Female.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Cat", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Cat")->textureID = LoadTGA("Image//Cat.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Dog", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Dog")->textureID = LoadTGA("Image//Dog.tga");
 
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(1000.0f, 800.0f, 0.0f));
+	//Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//Create::Sprite2DObject("Dog", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;

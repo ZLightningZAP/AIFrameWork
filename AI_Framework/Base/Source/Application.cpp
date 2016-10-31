@@ -71,7 +71,7 @@ void Application::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(m_window_width, m_window_height, "NYP Framework", NULL, NULL);
+	m_window = glfwCreateWindow(m_window_width, m_window_height, "AI Framework", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)

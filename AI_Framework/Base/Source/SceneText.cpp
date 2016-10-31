@@ -121,9 +121,14 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 
+	//AI Load Image
+	MeshBuilder::GetInstance()->GenerateQuad("Background", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Background")->textureID = LoadTGA("Image//RoomLayout.tga");
+
 	// Create entities into the scene
-	Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
-	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
+	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(1000.0f, 800.0f, 0.0f));
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;

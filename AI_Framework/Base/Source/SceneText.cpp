@@ -41,6 +41,7 @@ SceneText::~SceneText()
 
 void SceneText::Init()
 {
+	FSMInit();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Texture.fragmentshader");
 
 	// Tell the shader program to store these uniform locations
@@ -137,10 +138,10 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
-	//Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	//Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	//Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	//Create::Sprite2DObject("Dog", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//WorldObj[4] = Create::Sprite2DObject("Dog", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -152,6 +153,31 @@ void SceneText::Init()
 		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
 	}
 	textObj[0]->SetText("HELLO WORLD");
+}
+
+//All AI Init Here
+void SceneText::FSMInit()
+{
+
+}
+
+//Ai FSM Update Here
+void SceneText::FSMUpdate()
+{
+	RunFSM();
+	Respond();
+}
+
+//Conditions = Logic here
+void SceneText::RunFSM()
+{
+
+}
+
+//How the AI should respond + Effects will be seen
+void SceneText::Respond()
+{
+
 }
 
 void SceneText::Update(double dt)
@@ -178,6 +204,8 @@ void SceneText::Update(double dt)
 	ss1.precision(4);
 	ss1 << "Player:" << playerInfo->GetPos();
 	textObj[2]->SetText(ss1.str());
+
+	FSMUpdate();
 }
 
 void SceneText::Render()

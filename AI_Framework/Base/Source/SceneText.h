@@ -13,6 +13,7 @@
 class ShaderProgram;
 class SceneManager;
 class TextEntity;
+class SpriteEntity;
 class Light;
 class SceneText : public Scene
 {	
@@ -38,6 +39,13 @@ private:
 	GenericEntity* theCube;
 
 	static SceneText* sInstance; // The pointer to the object that gets registered
+	
+	SpriteEntity* WorldObj[4];
+
+	void FSMInit();
+	void RunFSM();
+	void FSMUpdate();
+	void Respond();
 };
 
 #endif

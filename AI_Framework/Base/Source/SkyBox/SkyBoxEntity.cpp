@@ -24,54 +24,54 @@ void SkyBoxEntity::Render()
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
 
-		// Front
-		modelStack.PushMatrix();
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[FRONT]);
-		modelStack.PopMatrix();
+	// Front
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[FRONT]);
+	modelStack.PopMatrix();
 
-		// Back
-		modelStack.PushMatrix();
-		modelStack.Rotate(180, 0, 1, 0);
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[BACK]);
-		modelStack.PopMatrix();
+	// Back
+	modelStack.PushMatrix();
+	modelStack.Rotate(180, 0, 1, 0);
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[BACK]);
+	modelStack.PopMatrix();
 
-		// Left
-		modelStack.PushMatrix();
-		modelStack.Rotate(-90, 0, 1, 0);
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[LEFT]);
-		modelStack.PopMatrix();
+	// Left
+	modelStack.PushMatrix();
+	modelStack.Rotate(-90, 0, 1, 0);
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[LEFT]);
+	modelStack.PopMatrix();
 
-		// Right
-		modelStack.PushMatrix();
-		modelStack.Rotate(90, 0, 1, 0);
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[RIGHT]);
-		modelStack.PopMatrix();
+	// Right
+	modelStack.PushMatrix();
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[RIGHT]);
+	modelStack.PopMatrix();
 
-		// Top
-		modelStack.PushMatrix();
-		modelStack.Rotate(90, 1, 0, 0);
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Rotate(-90, 0, 0, 1);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[TOP]);
-		modelStack.PopMatrix();
+	// Top
+	modelStack.PushMatrix();
+	modelStack.Rotate(90, 1, 0, 0);
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Rotate(-90, 0, 0, 1);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[TOP]);
+	modelStack.PopMatrix();
 
-		// Bottom
-		modelStack.PushMatrix();
-		modelStack.Rotate(-90, 1, 0, 0);
-		modelStack.Translate(0, 0, -size.z / 2);
-		modelStack.Rotate(90, 0, 0, 1);
-		modelStack.Scale(size.x, size.y, size.z);
-			RenderHelper::RenderMesh(modelMesh[BOTTOM]);
-		modelStack.PopMatrix();
+	// Bottom
+	modelStack.PushMatrix();
+	modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Translate(0, 0, -size.z / 2);
+	modelStack.Rotate(90, 0, 0, 1);
+	modelStack.Scale(size.x, size.y, size.z);
+	RenderHelper::RenderMesh(modelMesh[BOTTOM]);
+	modelStack.PopMatrix();
 
 	modelStack.PopMatrix();
 }
@@ -86,20 +86,20 @@ Vector3 SkyBoxEntity::GetBoundary(void)
 {
 	if (!m_bBoundaryDefined)
 	{
-		boundary = Vector3(	position.x - (size.x*scale.x) / 2.0f,
-							position.y - (size.y*scale.y) / 2.0f,
-							position.z - (size.z*scale.z) / 2.0f);
+		boundary = Vector3(position.x - (size.x*scale.x) / 2.0f,
+			position.y - (size.y*scale.y) / 2.0f,
+			position.z - (size.z*scale.z) / 2.0f);
 		m_bBoundaryDefined = true;
 	}
 	return boundary;
 };
 
-SkyBoxEntity* Create::SkyBox(	const std::string& _meshName0, 
-								const std::string& _meshName1,
-								const std::string& _meshName2,
-								const std::string& _meshName3,
-								const std::string& _meshName4,
-								const std::string& _meshName5)
+SkyBoxEntity* Create::SkyBox(const std::string& _meshName0,
+	const std::string& _meshName1,
+	const std::string& _meshName2,
+	const std::string& _meshName3,
+	const std::string& _meshName4,
+	const std::string& _meshName5)
 {
 	Mesh* modelMesh0 = MeshBuilder::GetInstance()->GetMesh(_meshName0);
 	if (modelMesh0 == nullptr)

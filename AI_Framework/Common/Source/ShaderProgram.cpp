@@ -90,7 +90,7 @@ void ShaderProgram::UpdateMatrix44(unsigned int _ID, float* _startPtr)
 void ShaderProgram::UpdateInt(const std::string& _name, int _value)
 {
 	unsigned int ID = GetOrAddUniform(_name);
-	
+
 	if (ID == SHADER_ERROR)
 		return;
 

@@ -24,8 +24,8 @@ Copyright (C) 2010 DigiPen Institute of Technology
 /******************************************************************************/
 /*!
 		enum InputMap:
-\brief	enumerations of keyboard keys ID
-*/
+		\brief	enumerations of keyboard keys ID
+		*/
 /******************************************************************************/
 namespace InputMap {
 	enum ID {
@@ -97,8 +97,8 @@ InputMap::ID GetKey(WPARAM wp);
 /******************************************************************************/
 /*!
 		Class Input:
-\brief	Input class and related methods
-*/
+		\brief	Input class and related methods
+		*/
 /******************************************************************************/
 class Input {
 public:
@@ -117,7 +117,7 @@ public:
 	//Mouse controls
 	int GetMouseX(void) const;
 	int GetMouseY(void) const;
-	
+
 	int GetMouseDX(void) const;
 	int GetMouseDY(void) const;
 
@@ -150,7 +150,6 @@ private:
 
 	InputMap::ID lastTriggered;
 	int lastClicked;
-	
 }; //end class Input
 
 #endif

@@ -36,7 +36,6 @@ public:
 
 	void SetMesh(const int _side, Mesh* _modelMesh);
 
-
 private:
 	Vector3 size, boundary;
 	bool m_bBoundaryDefined;
@@ -45,12 +44,12 @@ private:
 
 namespace Create
 {
-	SkyBoxEntity* SkyBox(	const std::string& _meshName0,
-							const std::string& _meshName1,
-							const std::string& _meshName2,
-							const std::string& _meshName3,
-							const std::string& _meshName4,
-							const std::string& _meshName5);
+	SkyBoxEntity* SkyBox(const std::string& _meshName0,
+		const std::string& _meshName1,
+		const std::string& _meshName2,
+		const std::string& _meshName3,
+		const std::string& _meshName4,
+		const std::string& _meshName5);
 };
 
 #endif // GROUND_ENTITY_H

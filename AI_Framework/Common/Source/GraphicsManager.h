@@ -25,7 +25,7 @@ public:
 	// Setting Projection Matrix
 	void SetOrthographicProjection(double _left, double _right, double _bottom, double _top, double _nearVal, double _farVal);
 	void SetPerspectiveProjection(double _fovy, double _aspect, double _zNear, double _zFar);
-	inline Mtx44& GetProjectionMatrix(){ return projectionMatrix;  };
+	inline Mtx44& GetProjectionMatrix(){ return projectionMatrix; };
 
 	// Handling Camera
 	void AttachCamera(CameraBase* _cameraPtr);

@@ -19,7 +19,7 @@ void SceneManager::Update(double _dt)
 			// Scene is valid, need to call appropriate function to exit
 			activeScene->Exit();
 		}
-		
+
 		activeScene = nextScene;
 		activeScene->Init();
 	}

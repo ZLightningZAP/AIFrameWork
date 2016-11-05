@@ -36,7 +36,7 @@ MS::~MS() {
 Return the top matrix on the matrix stack
 
 \return
-	A copy of the top matrix
+A copy of the top matrix
 */
 /******************************************************************************/
 const Mtx44& MS::Top() const {
@@ -70,7 +70,7 @@ Clear the matrix stack
 */
 /******************************************************************************/
 void MS::Clear() {
-	while(ms.size() > 1)
+	while (ms.size() > 1)
 		ms.pop();
 }
 
@@ -92,7 +92,7 @@ void MS::LoadIdentity() {
 Return the top matrix with a new matrix
 
 \param matrix
-	The new matrix to replace the top
+The new matrix to replace the top
 */
 /******************************************************************************/
 void MS::LoadMatrix(const Mtx44 &matrix) {
@@ -105,7 +105,7 @@ void MS::LoadMatrix(const Mtx44 &matrix) {
 Multiply the top matrix with a new matrix
 
 \param matrix
-	The new matrix to replace the top
+The new matrix to replace the top
 */
 /******************************************************************************/
 void MS::MultMatrix(const Mtx44 &matrix) {
@@ -118,13 +118,13 @@ void MS::MultMatrix(const Mtx44 &matrix) {
 Multiply the top matrix with a rotation matrix based on the following parameters
 
 \param	degrees
-	Angle of rotation, in degrees, clockwise
+Angle of rotation, in degrees, clockwise
 \param	axisX
-	X-component of the rotation axis
+X-component of the rotation axis
 \param	axisY
-	Y-component of the rotation axis
+Y-component of the rotation axis
 \param	axisZ
-	Z-component of the rotation axis
+Z-component of the rotation axis
 */
 /******************************************************************************/
 void MS::Rotate(float degrees, float axisX, float axisY, float axisZ) {
@@ -139,11 +139,11 @@ void MS::Rotate(float degrees, float axisX, float axisY, float axisZ) {
 Multiply the top matrix with a scale matrix based on the following parameters
 
 \param	scaleX
-	Factor to scale along x-axis
+Factor to scale along x-axis
 \param	scaleY
-	Factor to scale along y-axis
+Factor to scale along y-axis
 \param	scaleZ
-	Factor to scale along z-axis
+Factor to scale along z-axis
 */
 /******************************************************************************/
 void MS::Scale(float scaleX, float scaleY, float scaleZ) {
@@ -155,15 +155,15 @@ void MS::Scale(float scaleX, float scaleY, float scaleZ) {
 /******************************************************************************/
 /*!
 \brief
-Multiply the top matrix with a translation matrix based on the following 
+Multiply the top matrix with a translation matrix based on the following
 parameters
 
 \param	translateX
-	Offset along x-axis
+Offset along x-axis
 \param	scaleY
-	Offset along y-axis
+Offset along y-axis
 \param	scaleZ
-	Offset along z-axis
+Offset along z-axis
 */
 /******************************************************************************/
 void MS::Translate(float translateX, float translateY, float translateZ) {
@@ -178,17 +178,17 @@ void MS::Translate(float translateX, float translateY, float translateZ) {
 Setup frustum matrix and push to matrix stack
 
 \param left
-	Frustum - left 
+Frustum - left
 \param right
-	Frustum - right 
+Frustum - right
 \param bottom
-	Frustum - bottom 
+Frustum - bottom
 \param top
-	Frustum - top 
+Frustum - top
 \param near
-	Frustum - front
+Frustum - front
 \param far
-	Frustum - back
+Frustum - back
 */
 /******************************************************************************/
 void MS::Frustum(double left, double right, double bottom, double top, double near, double far) {
@@ -202,28 +202,28 @@ void MS::Frustum(double left, double right, double bottom, double top, double ne
 \brief Setup lookat matrix and push to matrix stack
 
 \param eyeX
-	eye vector x value
+eye vector x value
 \param eyeY
-	eye vector y value
+eye vector y value
 \param eyeZ
-	eye vector z value
+eye vector z value
 \param centerX
-	target position x value
+target position x value
 \param centerY
-	target position y value
+target position y value
 \param centerZ
-	target position z value
+target position z value
 \param upX
-	up vector x value
+up vector x value
 \param upY
-	up vector y value
+up vector y value
 \param upZ
-	up vector z value
+up vector z value
 */
 /******************************************************************************/
 void MS::LookAt(double eyeX, double eyeY, double eyeZ,
-				double centerX, double centerY, double centerZ,
-				double upX, double upY, double upZ)
+	double centerX, double centerY, double centerZ,
+	double upX, double upY, double upZ)
 {
 	Mtx44 mat;
 	mat.SetToLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);

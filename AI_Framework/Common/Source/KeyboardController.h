@@ -14,7 +14,7 @@ public:
 	// System Interface
 	void UpdateKeyboardStatus(unsigned char _slot, bool _isPressed);
 	void EndFrameUpdate();
-	
+
 	// User Interface
 	bool IsKeyDown(unsigned char _slot);
 	bool IsKeyUp(unsigned char _slot);

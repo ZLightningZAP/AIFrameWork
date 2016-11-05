@@ -138,7 +138,7 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
-	//WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[4] = Create::Sprite2DObject("Dog", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
@@ -158,7 +158,6 @@ void SceneText::Init()
 //All AI Init Here
 void SceneText::FSMInit()
 {
-
 }
 
 //Ai FSM Update Here
@@ -171,13 +170,12 @@ void SceneText::FSMUpdate()
 //Conditions = Logic here
 void SceneText::RunFSM()
 {
-
+	WorldObj[1]->MovePos(Vector3(0, -100, 1), 1);
 }
 
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
-
 }
 
 void SceneText::Update(double dt)

@@ -33,6 +33,8 @@ public:
 
 	inline void SetTextRenderMode(SPRITE_RENDERMODE _mode){ mode = _mode; };
 
+	void MovePos(Vector3 finalpos, float speed);
+
 private:
 	Vector3 position;
 	Vector3 scale;
@@ -42,7 +44,7 @@ private:
 
 namespace Create
 {
-	SpriteEntity* Sprite2DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f,1.0f,1.0f));
+	SpriteEntity* Sprite2DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 	SpriteEntity* Sprite3DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 };
 

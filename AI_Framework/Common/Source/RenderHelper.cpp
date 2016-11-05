@@ -57,7 +57,7 @@ void RenderHelper::RenderMeshWithLight(Mesh* _mesh)
 	currProg->UpdateVector3("material.kDiffuse", &_mesh->material.kDiffuse.r);
 	currProg->UpdateVector3("material.kSpecular", &_mesh->material.kSpecular.r);
 	currProg->UpdateFloat("material.kShininess", _mesh->material.kShininess);
-	
+
 	// Update textures first if available
 	if (_mesh->textureID > 0)
 	{
@@ -92,7 +92,7 @@ void RenderHelper::RenderText(Mesh* _mesh, const std::string& _text, Color _colo
 	currProg->UpdateVector3("textColor", &_color.r);
 	currProg->UpdateInt("lightEnabled", 0);
 	currProg->UpdateInt("colorTextureEnabled", 1);
-	
+
 	currProg->UpdateInt("colorTextureEnabled", 1);
 	GraphicsManager::GetInstance()->UpdateTexture(0, _mesh->textureID);
 	currProg->UpdateInt("colorTexture", 0);

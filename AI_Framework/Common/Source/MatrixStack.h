@@ -16,8 +16,8 @@ Matrix Stack to replace openGL math function
 /******************************************************************************/
 /*!
 		Class MS:
-\brief	Matrix Stack class
-*/
+		\brief	Matrix Stack class
+		*/
 /******************************************************************************/
 class MS {
 	std::stack<Mtx44> ms;
@@ -36,8 +36,8 @@ public:
 	void Translate(float translateX, float translateY, float translateZ);
 	void Frustum(double left, double right, double	bottom, double top, double near, double far);
 	void LookAt(double eyeX, double eyeY, double eyeZ,
-				double centerX, double centerY, double centerZ,
-				double upX, double upY, double upZ);
+		double centerX, double centerY, double centerZ,
+		double upX, double upY, double upZ);
 };
 
 #endif

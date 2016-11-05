@@ -66,7 +66,7 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 			FragmentShaderCode += "\n" + Line;
 		FragmentShaderStream.close();
 	}
-	else 
+	else
 	{
 		printf("ERROR : Unable to open %s\n", _fragmentFilePath.c_str());
 		getchar();
@@ -76,9 +76,9 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	
+
 	GLint Result = GL_FALSE;
-//	int InfoLogLength;
+	//	int InfoLogLength;
 	bool compileResult = true;
 
 	// Compile Vertex Shader
@@ -110,10 +110,10 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0)
 	{
-		std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-		printf("%s\n", &VertexShaderErrorMessage[0]);
-		compileResult = false;
+	std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+	glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+	printf("%s\n", &VertexShaderErrorMessage[0]);
+	compileResult = false;
 	}
 	*/
 
@@ -153,10 +153,10 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0)
 	{
-		std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
-		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		printf("%s\n", &FragmentShaderErrorMessage[0]);
-		compileResult = false;
+	std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
+	glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+	printf("%s\n", &FragmentShaderErrorMessage[0]);
+	compileResult = false;
 	}
 	*/
 
@@ -201,10 +201,10 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0)
 	{
-		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
-		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		printf("%s\n", &ProgramErrorMessage[0]);
-		compileResult = false;
+	std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+	glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+	printf("%s\n", &ProgramErrorMessage[0]);
+	compileResult = false;
 	}
 
 	*/

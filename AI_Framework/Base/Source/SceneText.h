@@ -16,7 +16,7 @@ class TextEntity;
 class SpriteEntity;
 class Light;
 class SceneText : public Scene
-{	
+{
 public:
 	SceneText();
 	~SceneText();
@@ -39,7 +39,7 @@ private:
 	GenericEntity* theCube;
 
 	static SceneText* sInstance; // The pointer to the object that gets registered
-	
+
 	SpriteEntity* WorldObj[4];
 
 	void FSMInit();

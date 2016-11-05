@@ -4,7 +4,7 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 
-GroundEntity::GroundEntity(Mesh* _modelMesh1, Mesh* _modelMesh2) 
+GroundEntity::GroundEntity(Mesh* _modelMesh1, Mesh* _modelMesh2)
 	: position(0.0f, 0.0f, 0.0f)
 	, scale(1.0f, 1.0f, 1.0f)
 	, size(1.0f, 1.0f, 1.0f)
@@ -64,23 +64,23 @@ float GroundEntity::GetTerrainHeight(Vector3 position)
 }
 
 Vector3 GroundEntity::GetMaxBoundary(void)
-{ 
+{
 	if (!m_bMaxBoundaryDefined)
 	{
-		maxBoundary = Vector3(	position.x + (grids.x*size.x*scale.x) / 2.0f, 
-								position.y + (grids.y*size.y*scale.y) / 2.0f, 
-								position.z + (grids.z*size.z*scale.z) / 2.0f);
+		maxBoundary = Vector3(position.x + (grids.x*size.x*scale.x) / 2.0f,
+			position.y + (grids.y*size.y*scale.y) / 2.0f,
+			position.z + (grids.z*size.z*scale.z) / 2.0f);
 		m_bMaxBoundaryDefined = true;
 	}
 	return maxBoundary;
 };
 Vector3 GroundEntity::GetMinBoundary(void)
-{ 
+{
 	if (!m_bMinBoundaryDefined)
 	{
-		minBoundary = Vector3(	position.x - (grids.x*size.x*scale.x) / 2.0f, 
-								position.y - (grids.y*size.y*scale.y) / 2.0f, 
-								position.z - (grids.z*size.z*scale.z) / 2.0f);
+		minBoundary = Vector3(position.x - (grids.x*size.x*scale.x) / 2.0f,
+			position.y - (grids.y*size.y*scale.y) / 2.0f,
+			position.z - (grids.z*size.z*scale.z) / 2.0f);
 		m_bMinBoundaryDefined = true;
 	}
 	return minBoundary;

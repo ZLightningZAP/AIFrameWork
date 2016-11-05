@@ -5,7 +5,7 @@
 #include "KeyboardController.h"
 #include "Mtx44.h"
 
-// Allocating and initializing CPlayerInfo's static data member.  
+// Allocating and initializing CPlayerInfo's static data member.
 // The pointer is allocated but not the object's constructor.
 CPlayerInfo *CPlayerInfo::s_instance = 0;
 
@@ -32,9 +32,9 @@ CPlayerInfo::~CPlayerInfo(void)
 void CPlayerInfo::Init(void)
 {
 	// Set the default values
-	defaultPosition.Set(0,0,10);
-	defaultTarget.Set(0,0,0);
-	defaultUp.Set(0,1,0);
+	defaultPosition.Set(0, 0, 10);
+	defaultTarget.Set(0, 0, 0);
+	defaultUp.Set(0, 1, 0);
 
 	// Set the current values
 	position.Set(0, 0, 10);
@@ -42,7 +42,7 @@ void CPlayerInfo::Init(void)
 	up.Set(0, 1, 0);
 
 	// Set Boundary
-	maxBoundary.Set(1,1,1);
+	maxBoundary.Set(1, 1, 1);
 	minBoundary.Set(-1, -1, -1);
 }
 
@@ -53,7 +53,6 @@ bool CPlayerInfo::isOnGround(void)
 	{
 		return true;
 	}
-
 
 	return false;
 }
@@ -85,7 +84,6 @@ void CPlayerInfo::SetOnFreeFall(bool isOnFreeFall)
 		m_bFallDownwards = true;
 		m_dFallSpeed = 0.0;
 	}
-
 }
 
 // Set the player to jumping upwards
@@ -148,7 +146,6 @@ void CPlayerInfo::SetTerrain(GroundEntity* m_pTerrain)
 			SetBoundary(this->m_pTerrain->GetMaxBoundary(), this->m_pTerrain->GetMinBoundary());
 		}
 	}
-
 }
 
 // Stop the player's movement
@@ -400,7 +397,6 @@ void CPlayerInfo::Update(double dt)
 	}
 	else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
 	{
-
 	}
 
 	// If the user presses R key, then reset the view to default values
@@ -443,13 +439,11 @@ void CPlayerInfo::Constrain(void)
 	//if player not jumping nor falling, adjust y position
 	if ((m_bJumpUpwards == false) && (m_bFallDownwards == false))
 	{
-
 		//if y pos not equal to terrain height at that position, update y to terrain height
 
 		if (position.y != m_pTerrain->GetTerrainHeight(position))
 			position.y = m_pTerrain->GetTerrainHeight(position);
 	}
-
 }
 
 void CPlayerInfo::AttachCamera(FPSCamera* _cameraPtr)

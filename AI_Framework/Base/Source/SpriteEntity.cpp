@@ -74,3 +74,17 @@ SpriteEntity* Create::Sprite3DObject(const std::string& _meshName, const Vector3
 	EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
+
+void SpriteEntity::MovePos(Vector3 finalpos, float speed)
+{
+	Vector3 currentPos;
+	currentPos = Vector3(this->GetPosition().x, this->GetPosition().y, 1);
+
+	if (currentPos != finalpos)
+	{
+		Vector3 direction;
+		direction = (finalpos - currentPos).Normalized();
+		direction = Vector3(direction.x, direction.y, 1);
+		this->SetPosition(currentPos + (direction * speed));
+	}
+}

@@ -35,9 +35,9 @@ void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
 	this->minAABB = minAABB;
 }
 
-GenericEntity* Create::Entity(	const std::string& _meshName, 
-								const Vector3& _position,
-								const Vector3& _scale)
+GenericEntity* Create::Entity(const std::string& _meshName,
+	const Vector3& _position,
+	const Vector3& _scale)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)

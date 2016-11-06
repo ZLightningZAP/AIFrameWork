@@ -150,7 +150,7 @@ void SceneText::Init()
 	float halfFontSize = fontSize / 2.0f;
 	for (int i = 0; i < 3; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
 	}
 	textObj[0]->SetText("HELLO WORLD");
 }
@@ -158,24 +158,49 @@ void SceneText::Init()
 //All AI Init Here
 void SceneText::FSMInit()
 {
+	//Day/Night Cycle
+	DAY = true;
+	NIGHT = false;
+	Time = 0;
+
+	//Male Init
+	//Female Init
+	//Dog Init
+	//Cat Init
 }
 
 //Ai FSM Update Here
-void SceneText::FSMUpdate()
+void SceneText::FSMUpdate(double dt)
 {
-	RunFSM();
+	RunFSM(dt);
 	Respond();
 }
 
 //Conditions = Logic here
-void SceneText::RunFSM()
+//Run in real time
+void SceneText::RunFSM(double dt)
 {
-	WorldObj[1]->MovePos(Vector3(0, -100, 1), 1);
+	Time += dt;
+	if (Time >= 5)
+	{
+		if (DAY == true)
+		{
+			DAY = false;
+			NIGHT = true;
+		}
+		else if (NIGHT == true)
+		{
+			DAY = true;
+			NIGHT = false;
+		}
+		Time = 0;
+	}
 }
 
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
+	WorldObj[1]->MovePos(Vector3(0, -100, 1), 1);
 }
 
 void SceneText::Update(double dt)
@@ -191,19 +216,25 @@ void SceneText::Update(double dt)
 
 	// Update the 2 text object values.
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
+	//std::ostringstream ss;
+	//ss.precision(5);
+	//float fps = (float)(1.f / dt);
+	//ss << "FPS: " << fps;
+	//textObj[1]->SetText(ss.str());
+
+	//Day/Night Cycle
 	std::ostringstream ss;
-	ss.precision(5);
-	float fps = (float)(1.f / dt);
-	ss << "FPS: " << fps;
+	if (DAY == true)
+	{
+		ss << "Status:DAY";
+	}
+	else if (NIGHT == true)
+	{
+		ss << "Status:NIGHT";
+	}
 	textObj[1]->SetText(ss.str());
 
-	// Update the player position into textObj[2]
-	std::ostringstream ss1;
-	ss1.precision(4);
-	ss1 << "Player:" << playerInfo->GetPos();
-	textObj[2]->SetText(ss1.str());
-
-	FSMUpdate();
+	FSMUpdate(dt);
 }
 
 void SceneText::Render()

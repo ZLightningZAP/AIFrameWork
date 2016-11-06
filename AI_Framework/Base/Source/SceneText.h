@@ -26,6 +26,12 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+	//AI Variables
+	//Day Night Cycle
+	bool DAY;
+	bool NIGHT;
+	double Time;
+
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
 
@@ -43,8 +49,8 @@ private:
 	SpriteEntity* WorldObj[4];
 
 	void FSMInit();
-	void RunFSM();
-	void FSMUpdate();
+	void RunFSM(double dt);
+	void FSMUpdate(double dt);
 	void Respond();
 };
 

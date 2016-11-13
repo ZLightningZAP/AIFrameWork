@@ -39,6 +39,13 @@ SceneText::~SceneText()
 {
 }
 
+struct Character{
+	int m_hunger;
+	int m_bowel;
+	int m_clean;
+	int m_entertain;
+};
+
 void SceneText::Init()
 {
 	FSMInit();
@@ -164,7 +171,14 @@ void SceneText::FSMInit()
 	Time = 0;
 
 	//Male Init
+
 	//Female Init
+	Character Female;
+	Female.m_bowel = 0;
+	Female.m_clean = 0;
+	Female.m_entertain = 100;
+	Female.m_hunger = 0;
+
 	//Dog Init
 	//Cat Init
 }

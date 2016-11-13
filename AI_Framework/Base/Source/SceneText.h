@@ -34,6 +34,20 @@ public:
 	bool DAY;
 	bool NIGHT;
 	double Time;
+	double TimePast;
+
+	struct Character{
+		int m_hunger;
+		int m_bowel;
+		int m_clean;
+		int m_entertain;
+	};
+
+	Character Female;
+	Character Male;
+	Character Cat;
+	Character Mouse;
+
 
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager

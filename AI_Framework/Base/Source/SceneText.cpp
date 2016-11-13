@@ -39,12 +39,6 @@ SceneText::~SceneText()
 {
 }
 
-struct Character{
-	int m_hunger;
-	int m_bowel;
-	int m_clean;
-	int m_entertain;
-};
 
 void SceneText::Init()
 {
@@ -199,14 +193,16 @@ void SceneText::FSMInit()
 	//Male Init
 
 	//Female Init
-	Character Female;
 	Female.m_bowel = 0;
-	Female.m_clean = 0;
+	Female.m_clean = 100;
 	Female.m_entertain = 100;
 	Female.m_hunger = 0;
 
-	//Dog Init
+	//Mouse Init
+	Mouse.m_hunger = 0;
+
 	//Cat Init
+
 }
 
 //Ai FSM Update Here
@@ -235,6 +231,23 @@ void SceneText::RunFSM(double dt)
 		}
 		Time = 0;
 	}
+	
+	TimePast += dt;
+	//Every 15 mins
+	if (TimePast >= 15)
+	{
+		//Female stats
+		Female.m_clean += 10;
+		Female.m_entertain -= 2;
+
+		//Mouse stats
+		if (NIGHT)
+		{
+			Mouse.m_hunger += 10;
+		}
+		
+	}
+
 }
 
 //How the AI should respond + Effects will be seen

@@ -34,6 +34,7 @@ public:
 	inline void SetTextRenderMode(SPRITE_RENDERMODE _mode){ mode = _mode; };
 
 	void MovePos(Vector3 finalpos, float speed);
+	bool ReachPos(Vector3 finalpos);
 
 private:
 	Vector3 position;

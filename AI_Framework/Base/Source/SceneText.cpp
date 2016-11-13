@@ -138,8 +138,8 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("Female")->textureID = LoadTGA("Image//Female.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("Cat", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Cat")->textureID = LoadTGA("Image//Cat.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("Dog", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Dog")->textureID = LoadTGA("Image//Dog.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Mouse", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Mouse")->textureID = LoadTGA("Image//Mouse.tga");
 
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
@@ -148,7 +148,7 @@ void SceneText::Init()
 	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	//WorldObj[4] = Create::Sprite2DObject("Dog", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	//WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -157,9 +157,10 @@ void SceneText::Init()
 	float halfFontSize = fontSize / 2.0f;
 	for (int i = 0; i < 3; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
+		textObj[i]->SetColor(Color(0, 0, 0));
 	}
-	textObj[0]->SetText("HELLO WORLD");
+	//textObj[0]->SetText("HELLO WORLD");
 }
 
 //All AI Init Here
@@ -169,6 +170,9 @@ void SceneText::FSMInit()
 	DAY = true;
 	NIGHT = false;
 	Time = 0;
+
+	//Waypoint Init
+	wayPoints.push_back(Vector3(1, 1, 1));
 
 	//Male Init
 
@@ -214,7 +218,7 @@ void SceneText::RunFSM(double dt)
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
-	WorldObj[1]->MovePos(Vector3(0, -100, 1), 1);
+	WorldObj[1]->MovePos(Vector3(-120, -63, 1), 1);
 }
 
 void SceneText::Update(double dt)
@@ -246,7 +250,7 @@ void SceneText::Update(double dt)
 	{
 		ss << "Status:NIGHT";
 	}
-	textObj[1]->SetText(ss.str());
+	textObj[0]->SetText(ss.str());
 
 	FSMUpdate(dt);
 }

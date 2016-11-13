@@ -9,12 +9,15 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "GenericEntity.h"
+#include <vector>
 
 class ShaderProgram;
 class SceneManager;
 class TextEntity;
 class SpriteEntity;
 class Light;
+
+using namespace std;
 class SceneText : public Scene
 {
 public:
@@ -41,6 +44,8 @@ private:
 	FPSCamera camera;
 	TextEntity* textObj[3];
 	Light* lights[2];
+
+	vector <Vector3> wayPoints;
 
 	GenericEntity* theCube;
 

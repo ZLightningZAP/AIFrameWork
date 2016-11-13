@@ -172,7 +172,29 @@ void SceneText::FSMInit()
 	Time = 0;
 
 	//Waypoint Init
+	//Starting Position
 	wayPoints.push_back(Vector3(1, 1, 1));
+	//Bedroom
+	wayPoints.push_back(Vector3(0, 220, 1));
+	//////////////////////////////////////////////////////////////////
+	//Toilet
+	wayPoints.push_back(Vector3(150, 80, 1));
+	//Pet Room
+	wayPoints.push_back(Vector3(-150, 80, 1));
+	//Before Toilet/Pet Room
+	wayPoints.push_back(Vector3(0, 80, 1));
+	//////////////////////////////////////////////////////////////////
+	//Couch
+	wayPoints.push_back((-120, -63, 1));
+	//Kitchen
+	wayPoints.push_back(Vector3(300, -63, 1));
+	//Before Kitchen/Couch
+	wayPoints.push_back(Vector3(0, -63, 1));
+	//////////////////////////////////////////////////////////////////
+	//Outside
+	wayPoints.push_back(Vector3(450, -230, 1));
+	//Before going outside
+	wayPoints.push_back(Vector3(0, -230, 1));
 
 	//Male Init
 
@@ -218,7 +240,7 @@ void SceneText::RunFSM(double dt)
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
-	WorldObj[1]->MovePos(Vector3(-120, -63, 1), 1);
+	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
 }
 
 void SceneText::Update(double dt)

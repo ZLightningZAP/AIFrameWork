@@ -75,16 +75,32 @@ SpriteEntity* Create::Sprite3DObject(const std::string& _meshName, const Vector3
 	return result;
 }
 
+float GetDistance(float x1, float y1, float x2, float y2) { return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)); } // OK
+
 void SpriteEntity::MovePos(Vector3 finalpos, float speed)
 {
 	Vector3 currentPos;
 	currentPos = Vector3(this->GetPosition().x, this->GetPosition().y, 1);
+	Vector3 direction;
+	direction = (finalpos - currentPos).Normalized();
+	direction = Vector3(direction.x, direction.y, 0);
 
-	if (currentPos != finalpos)
+	float distance = GetDistance(this->GetPosition().x, this->GetPosition().y, finalpos.x, finalpos.y);
+	if (distance > 0.01f)
 	{
-		Vector3 direction;
-		direction = (finalpos - currentPos).Normalized();
-		direction = Vector3(direction.x, direction.y, 1);
-		this->SetPosition(currentPos + (direction * speed));
+		this->SetPosition(currentPos + direction * speed);
 	}
+}
+
+bool SpriteEntity::ReachPos(Vector3 finalpos)
+{
+	Vector3 currentPos;
+	currentPos = Vector3(this->GetPosition().x, this->GetPosition().y, 1);
+
+	float distance = GetDistance(this->GetPosition().x, this->GetPosition().y, finalpos.x, finalpos.y);
+	if (distance < 0.01f)
+	{
+		return true;
+	}
+	return false;
 }

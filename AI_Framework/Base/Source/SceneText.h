@@ -48,7 +48,6 @@ public:
 	Character Cat;
 	Character Mouse;
 
-
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
 
@@ -65,7 +64,7 @@ private:
 
 	static SceneText* sInstance; // The pointer to the object that gets registered
 
-	SpriteEntity* WorldObj[4];
+	SpriteEntity* WorldObj[5];
 
 	void FSMInit();
 	void RunFSM(double dt);

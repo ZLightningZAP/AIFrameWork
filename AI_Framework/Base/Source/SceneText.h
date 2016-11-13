@@ -47,7 +47,24 @@ public:
 	Character Male;
 	Character Cat;
 	Character Mouse;
+	
+	int FemaleState;
+	int MaleState;
+	int CatState;
+	int MouseState;
 
+	static const int IDLE = 0; //all characters
+	static const int EAT = 1; //all characters
+	static const int SHIT = 2; //female, male, cat
+	static const int SLEEP = 3; //female, male, cat
+	static const int WORK = 4; //male
+	static const int CLEAN = 5; //female
+	static const int WATCH = 6; //female
+	static const int HIDE = 7; //mouse
+	static const int ROAM = 8; //mouse
+
+	int MousePos;
+	Vector3 MouseNewPos;
 
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager

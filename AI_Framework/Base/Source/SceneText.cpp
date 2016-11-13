@@ -166,47 +166,40 @@ void SceneText::FSMInit()
 	Time = 0;
 
 	//Waypoint Init
-	//Starting Position [0]
+	//Starting Position
 	wayPoints.push_back(Vector3(1, 1, 1));
-	//Bedroom [1]
+	//Bedroom
 	wayPoints.push_back(Vector3(0, 220, 1));
 	//////////////////////////////////////////////////////////////////
-	//Toilet [2]
+	//Toilet
 	wayPoints.push_back(Vector3(150, 80, 1));
-	//Pet Room [3]
+	//Pet Room
 	wayPoints.push_back(Vector3(-150, 80, 1));
-	//Before Toilet/Pet Room [4]
+	//Before Toilet/Pet Room
 	wayPoints.push_back(Vector3(0, 80, 1));
 	//////////////////////////////////////////////////////////////////
-	//Couch [5]
+	//Couch
 	wayPoints.push_back((-120, -63, 1));
-	//Kitchen [6]
+	//Kitchen
 	wayPoints.push_back(Vector3(300, -63, 1));
-	//Before Kitchen/Couch [7]
+	//Before Kitchen/Couch
 	wayPoints.push_back(Vector3(0, -63, 1));
 	//////////////////////////////////////////////////////////////////
-	//Outside [8]
+	//Outside
 	wayPoints.push_back(Vector3(450, -230, 1));
-	//Before going outside [9]
+	//Before going outside
 	wayPoints.push_back(Vector3(0, -230, 1));
-
-	//Mouse Hole [10]
-	wayPoints.push_back(Vector3(0, -230, 0));
 
 	//Male Init
 	//WorldObj[1]->SetPosition(Vector3(wayPoints[2].x, wayPoints[2].y, wayPoints[2].z));
 
 	//Female Init
-	FemaleState = IDLE;
-	WorldObj[2]->SetPosition(Vector3(wayPoints[0]));
 	Female.m_bowel = 0;
 	Female.m_clean = 100;
 	Female.m_entertain = 100;
 	Female.m_hunger = 0;
 
 	//Mouse Init
-	MouseState = HIDE;
-	WorldObj[4]->SetPosition(Vector3(wayPoints[10]));
 	Mouse.m_hunger = 0;
 
 	//Cat Init
@@ -240,8 +233,7 @@ void SceneText::RunFSM(double dt)
 	}
 
 	TimePast += dt;
-
-	//Every 15 sec
+	//Every 15 mins
 	if (TimePast >= 15)
 	{
 		//Female stats
@@ -251,84 +243,16 @@ void SceneText::RunFSM(double dt)
 		//Mouse stats
 		if (NIGHT)
 		{
-			if (MouseState == EAT)
-				Mouse.m_hunger -= 10;
-			else
-				Mouse.m_hunger += 10;
+			Mouse.m_hunger += 10;
 		}
-
-		TimePast = 0;
 	}
-
 }
 
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
 	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
-
-	//Mouse
-	switch (MouseState)
-	{
-		case ROAM:
-			if (DAY)
-				MouseState = HIDE;
-				
-			else
-			{
-				if (Mouse.m_hunger >= 80)
-				{
-					MouseState = EAT;
-				}
-				else
-				{
-					//Randomise where mouse goes
-					MousePos = rand() % 3;
-					switch (MousePos)
-					{
-					case 0:
-						MouseNewPos = wayPoints[0];
-						break;
-					case 1:
-						MouseNewPos = wayPoints[4];
-						break;
-					case 2:
-						MouseNewPos = wayPoints[5];
-						break;
-					case 3:
-						MouseNewPos = wayPoints[9];
-						break;
-					}
-					WorldObj[4]->MovePos(MouseNewPos, 1);
-				}
-			}
-			break;
-
-		case HIDE:
-
-			WorldObj[4]->MovePos(wayPoints[10], 1);
-
-			if (NIGHT)
-				MouseState = ROAM;
-
-			break;
-
-		case EAT:
-
-			WorldObj[4]->MovePos(wayPoints[6], 1);
-
-			if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
-			{
-				MouseState = ROAM;
-			}
-
-			if (DAY)
-				MouseState = HIDE;
-			
-			break;
-	}
 }
-
 
 void SceneText::Update(double dt)
 {

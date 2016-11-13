@@ -39,10 +39,8 @@ SceneText::~SceneText()
 {
 }
 
-
 void SceneText::Init()
 {
-	FSMInit();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Texture.fragmentshader");
 
 	// Tell the shader program to store these uniform locations
@@ -144,6 +142,8 @@ void SceneText::Init()
 	//WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	//WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 
+	FSMInit();
+
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
@@ -191,6 +191,7 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(0, -230, 1));
 
 	//Male Init
+	//WorldObj[1]->SetPosition(Vector3(wayPoints[2].x, wayPoints[2].y, wayPoints[2].z));
 
 	//Female Init
 	Female.m_bowel = 0;
@@ -202,7 +203,6 @@ void SceneText::FSMInit()
 	Mouse.m_hunger = 0;
 
 	//Cat Init
-
 }
 
 //Ai FSM Update Here
@@ -231,7 +231,7 @@ void SceneText::RunFSM(double dt)
 		}
 		Time = 0;
 	}
-	
+
 	TimePast += dt;
 	//Every 15 mins
 	if (TimePast >= 15)
@@ -245,9 +245,7 @@ void SceneText::RunFSM(double dt)
 		{
 			Mouse.m_hunger += 10;
 		}
-		
 	}
-
 }
 
 //How the AI should respond + Effects will be seen

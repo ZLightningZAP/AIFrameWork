@@ -81,13 +81,13 @@ void SpriteEntity::MovePos(Vector3 finalpos, float speed)
 {
 	Vector3 currentPos;
 	currentPos = Vector3(this->GetPosition().x, this->GetPosition().y, 1);
-	Vector3 direction;
-	direction = (finalpos - currentPos).Normalized();
-	direction = Vector3(direction.x, direction.y, 0);
-
+	
 	float distance = GetDistance(this->GetPosition().x, this->GetPosition().y, finalpos.x, finalpos.y);
 	if (distance > 0.01f)
 	{
+		Vector3 direction;
+		direction = (finalpos - currentPos).Normalized();
+		direction = Vector3(direction.x, direction.y, 0);
 		this->SetPosition(currentPos + direction * speed);
 	}
 }

@@ -140,7 +140,7 @@ void SceneText::Init()
 	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(35.0f, 35.0f, 35.0f));
 
 	FSMInit();
 
@@ -179,7 +179,7 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(0, 80, 1));
 	//////////////////////////////////////////////////////////////////
 	//Couch[5]
-	wayPoints.push_back((-120, -63, 1));
+	wayPoints.push_back(Vector3(-120, -63, 1));
 	//Kitchen[6]
 	wayPoints.push_back(Vector3(300, -63, 1));
 	//Before Kitchen/Couch[7]
@@ -190,13 +190,13 @@ void SceneText::FSMInit()
 	//Before going outside[9]
 	wayPoints.push_back(Vector3(0, -230, 1));
 	//Mouse Hole [10]
-	wayPoints.push_back((-200, -93, 1));
+	wayPoints.push_back(Vector3(-380, -150, 1));
 
 	//Male Init
 	//WorldObj[1]->SetPosition(Vector3(wayPoints[2].x, wayPoints[2].y, wayPoints[2].z));
 
 	//FemaleState = IDLE;
-	WorldObj[2]->SetPosition(wayPoints[0]);
+	//WorldObj[2]->SetPosition(wayPoints[0]);
 	Female.m_bowel = 0;
 	Female.m_clean = 100;
 	Female.m_entertain = 100;
@@ -223,7 +223,7 @@ void SceneText::FSMUpdate(double dt)
 void SceneText::RunFSM(double dt)
 {
 	Time += dt;
-	if (Time >= 5)
+	if (Time >= 10)
 	{
 		if (DAY == true)
 		{
@@ -240,20 +240,17 @@ void SceneText::RunFSM(double dt)
 
 	TimePast += dt;
 	//Every 15s
-	if (TimePast >= 15)
+	if (TimePast >= 5)
 	{
 	    //Female stats
 	    Female.m_clean += 10;
 	    Female.m_entertain -= 2;
 
 	    //Mouse stats
-	    if (NIGHT)
-	    {
-	        if (MouseState == EAT)
-	            Mouse.m_hunger -= 10;
-	        else
-	            Mouse.m_hunger += 10;
-	    }
+		if (MouseState == EAT)
+			Mouse.m_hunger -= 10;
+		else
+			Mouse.m_hunger += 10;
 
 	    TimePast = 0;
 	}
@@ -264,65 +261,68 @@ void SceneText::RunFSM(double dt)
 void SceneText::Respond()
 {
 	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
-	//switch (MouseState)
-	//{
-	//    case ROAM:
-	//        if (DAY)
-	//            MouseState = HIDE;
-	//            
-	//        else
-	//        {
-	//            if (Mouse.m_hunger >= 80)
-	//            {
-	//                MouseState = EAT;
-	//            }
-	//            else
-	//            {
-	//                //Randomise where mouse goes
-	//                MousePos = rand() % 3;
-	//                switch (MousePos)
-	//                {
-	//                case 0:
-	//                    MouseNewPos = wayPoints[0];
-	//                    break;
-	//                case 1:
-	//                    MouseNewPos = wayPoints[4];
-	//                    break;
-	//                case 2:
-	//                    MouseNewPos = wayPoints[5];
-	//                    break;
-	//                case 3:
-	//                    MouseNewPos = wayPoints[9];
-	//                    break;
-	//                }
-	//                WorldObj[4]->MovePos(MouseNewPos, 1);
-	//            }
-	//        }
-	//        break;
+	switch (MouseState)
+	{
+	    case ROAM:
+	        if (DAY)
+	            MouseState = HIDE;
+	            
+	        else
+	        {
+	            if (Mouse.m_hunger >= 50)
+	            {
+	                MouseState = EAT;
+	            }
+	            else
+	            {
+	                //Randomise where mouse goes
+	              /*  MousePos = rand() % 3;
+	                switch (MousePos)
+	                {
+	                case 0:
+	                    MouseNewPos = wayPoints[0];
+	                    break;
+	                case 1:
+	                    MouseNewPos = wayPoints[4];
+	                    break;
+	                case 2:
+	                    MouseNewPos = wayPoints[5];
+	                    break;
+	                case 3:
+	                    MouseNewPos = wayPoints[9];
+	                    break;
+	                }*/
+	                WorldObj[4]->MovePos(/*MouseNewPos*/wayPoints[9], 1);
+	            }
+	        }
+	        break;
 
-	//    case HIDE:
+	    case HIDE:
 
-	//        WorldObj[4]->MovePos(wayPoints[10], 1);
+			if (WorldObj[4]->GetPosition() != wayPoints[10])
+			{
+				WorldObj[4]->MovePos(wayPoints[10], 1);
+			}
 
-	//        if (NIGHT)
-	//            MouseState = ROAM;
+	        if (NIGHT)
+	            MouseState = ROAM;
 
-	//        break;
+	        break;
 
-	//    case EAT:
+	    case EAT:
 
-	//        WorldObj[4]->MovePos(wayPoints[6], 1);
+	        WorldObj[4]->MovePos(wayPoints[6], 1);
 
-	//        if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
-	//        {
-	//            MouseState = ROAM;
-	//        }
+	        if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
+	        {
+	            MouseState = ROAM;
+	        }
 
-	//        if (DAY)
-	//            MouseState = HIDE;
-	//        
-	//        break;
-	//}
+	        if (DAY)
+	            MouseState = HIDE;
+	        
+	        break;
+	}
 
 }
 

@@ -240,7 +240,7 @@ void SceneText::RunFSM(double dt)
 
 	TimePast += dt;
 	//Every 15s
-	if (TimePast >= 5)
+	if (TimePast >= 15)
 	{
 	    //Female stats
 	    Female.m_clean += 10;
@@ -257,73 +257,88 @@ void SceneText::RunFSM(double dt)
 
 }
 
+void SceneText::RanMousePos()
+{
+	//Randomise where mouse goes
+	  MousePos = rand() % 3;
+	switch (MousePos)
+	{
+	case 0:
+	MouseNewPos = wayPoints[0];
+	break;
+	case 1:
+	MouseNewPos = wayPoints[4];
+	break;
+	case 2:
+	MouseNewPos = wayPoints[5];
+	break;
+	case 3:
+	MouseNewPos = wayPoints[9];
+	break;
+	}
+}
+
+
+void SceneText::MouseRespond()
+{
+	switch (MouseState)
+	{
+	case ROAM:
+		if (DAY)
+			MouseState = HIDE;
+
+		else
+		{
+			RanMousePos();
+			if (WorldObj[4]->ReachPos(MouseNewPos) == false)
+			{
+				WorldObj[4]->MovePos(MouseNewPos, 1);
+			}
+			else
+			{
+				RanMousePos();
+			}
+			/*if (Mouse.m_hunger >= 50)
+			{
+			MouseState = EAT;
+			}*/
+		}
+		break;
+
+	case HIDE:
+
+		if (WorldObj[4]->ReachPos(wayPoints[10]) == false)
+		{
+			WorldObj[4]->MovePos(wayPoints[10], 1);
+		}
+
+		if (NIGHT)
+			MouseState = ROAM;
+
+		break;
+
+	case EAT:
+
+		WorldObj[4]->MovePos(wayPoints[6], 1);
+
+		if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
+		{
+			MouseState = ROAM;
+		}
+
+		if (DAY)
+			MouseState = HIDE;
+
+		break;
+	}
+
+}
+
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
 	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
-	switch (MouseState)
-	{
-	    case ROAM:
-	        if (DAY)
-	            MouseState = HIDE;
-	            
-	        else
-	        {
-	            if (Mouse.m_hunger >= 50)
-	            {
-	                MouseState = EAT;
-	            }
-	            else
-	            {
-	                //Randomise where mouse goes
-	              /*  MousePos = rand() % 3;
-	                switch (MousePos)
-	                {
-	                case 0:
-	                    MouseNewPos = wayPoints[0];
-	                    break;
-	                case 1:
-	                    MouseNewPos = wayPoints[4];
-	                    break;
-	                case 2:
-	                    MouseNewPos = wayPoints[5];
-	                    break;
-	                case 3:
-	                    MouseNewPos = wayPoints[9];
-	                    break;
-	                }*/
-	                WorldObj[4]->MovePos(/*MouseNewPos*/wayPoints[9], 1);
-	            }
-	        }
-	        break;
-
-	    case HIDE:
-
-			if (WorldObj[4]->GetPosition() != wayPoints[10])
-			{
-				WorldObj[4]->MovePos(wayPoints[10], 1);
-			}
-
-	        if (NIGHT)
-	            MouseState = ROAM;
-
-	        break;
-
-	    case EAT:
-
-	        WorldObj[4]->MovePos(wayPoints[6], 1);
-
-	        if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
-	        {
-	            MouseState = ROAM;
-	        }
-
-	        if (DAY)
-	            MouseState = HIDE;
-	        
-	        break;
-	}
-
+	MouseRespond();
 }
 
 void SceneText::Update(double dt)

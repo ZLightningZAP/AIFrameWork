@@ -85,11 +85,15 @@ private:
 	SpriteEntity* WorldObj[5];
 
 	void FSMInit();
-	void RanMousePos();
-	void MouseRespond();
 	void RunFSM(double dt);
 	void FSMUpdate(double dt);
 	void Respond();
+
+	void RanMousePos();
+	void MouseRespond();
+	void CatRespond();
+
+	void CatFSMUpdate();
 };
 
 #endif

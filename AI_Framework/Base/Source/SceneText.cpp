@@ -140,7 +140,7 @@ void SceneText::Init()
 	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(35.0f, 35.0f, 35.0f));
+	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
 
 	FSMInit();
 
@@ -164,6 +164,7 @@ void SceneText::FSMInit()
 	DAY = true;
 	NIGHT = false;
 	Time = 0;
+	TimePast = 0;
 
 	//Waypoint Init
 	//Starting Position[0]
@@ -202,13 +203,16 @@ void SceneText::FSMInit()
 	Female.m_entertain = 100;
 	Female.m_hunger = 0;
 
-	////Mouse Init
+	//Mouse Init
 	MouseState = HIDE;
 	WorldObj[4]->SetPosition(wayPoints[10]);
 	Mouse.m_hunger = 0;
 
-
 	//Cat Init
+	CatState = IDLE;
+	WorldObj[3]->SetPosition(wayPoints[5]);
+	Cat.m_hunger = 100;
+	Cat.m_bowel = 0;
 }
 
 //Ai FSM Update Here
@@ -223,7 +227,7 @@ void SceneText::FSMUpdate(double dt)
 void SceneText::RunFSM(double dt)
 {
 	Time += dt;
-	if (Time >= 10)
+	if (Time >= 60)
 	{
 		if (DAY == true)
 		{
@@ -239,45 +243,51 @@ void SceneText::RunFSM(double dt)
 	}
 
 	TimePast += dt;
-	//Every 15s
-	if (TimePast >= 15)
+	//Every 5s
+	if (TimePast >= 5)
 	{
-	    //Female stats
-	    Female.m_clean += 10;
-	    Female.m_entertain -= 2;
+		//Female stats
+		Female.m_clean += 10;
+		Female.m_entertain -= 2;
 
-	    //Mouse stats
+		//Mouse stats
 		if (MouseState == EAT)
 			Mouse.m_hunger -= 10;
 		else
 			Mouse.m_hunger += 10;
 
-	    TimePast = 0;
+		//Cat stats
+		if (CatState == EAT)
+			Cat.m_hunger += 10;
+		else
+			Cat.m_hunger -= 10;
+
+		TimePast = 0;
 	}
 
+	CatFSMUpdate();
 }
 
 void SceneText::RanMousePos()
 {
 	//Randomise where mouse goes
-	  MousePos = rand() % 3;
+	MousePos = rand() % 3;
 	switch (MousePos)
 	{
 	case 0:
-	MouseNewPos = wayPoints[0];
-	break;
+		MouseNewPos = wayPoints[0];
+		break;
 	case 1:
-	MouseNewPos = wayPoints[4];
-	break;
+		MouseNewPos = wayPoints[4];
+		break;
 	case 2:
-	MouseNewPos = wayPoints[5];
-	break;
+		MouseNewPos = wayPoints[5];
+		break;
 	case 3:
-	MouseNewPos = wayPoints[9];
-	break;
+		MouseNewPos = wayPoints[9];
+		break;
 	}
 }
-
 
 void SceneText::MouseRespond()
 {
@@ -289,15 +299,15 @@ void SceneText::MouseRespond()
 
 		else
 		{
+			//RanMousePos();
+			if (WorldObj[4]->ReachPos(wayPoints[9]) == false)
+			{
+				WorldObj[4]->MovePos(wayPoints[9], 1);
+			}
+			/*else
+			{
 			RanMousePos();
-			if (WorldObj[4]->ReachPos(MouseNewPos) == false)
-			{
-				WorldObj[4]->MovePos(MouseNewPos, 1);
-			}
-			else
-			{
-				RanMousePos();
-			}
+			}*/
 			/*if (Mouse.m_hunger >= 50)
 			{
 			MouseState = EAT;
@@ -331,7 +341,57 @@ void SceneText::MouseRespond()
 
 		break;
 	}
+}
 
+void SceneText::CatRespond()
+{
+	switch (CatState)
+	{
+	case IDLE:
+		//Go to couch
+		WorldObj[3]->MovePos(wayPoints[5], 1);
+		break;
+	case EAT:
+		//Go to kitchen
+		WorldObj[3]->MovePos(wayPoints[6], 1);
+		break;
+	case SLEEP:
+		//Go to pet room
+		WorldObj[3]->MovePos(wayPoints[3], 1);
+		break;
+	case SHIT:
+		//Go to toilet
+		WorldObj[3]->MovePos(wayPoints[2], 1);
+		break;
+	}
+}
+
+void SceneText::CatFSMUpdate()
+{
+	if (DAY == true)
+	{
+		switch (CatState)
+		{
+		case IDLE:
+			if (Cat.m_hunger <= 80)
+				CatState = EAT;
+			break;
+		case EAT:
+			if (Cat.m_hunger >= 100)
+				CatState = IDLE;
+			break;
+		case SLEEP:
+			break;
+		case SHIT:
+			break;
+		}
+	}
+	else if (NIGHT == true)
+	{
+		CatState = SLEEP;
+		Cat.m_hunger = 100;
+		Cat.m_bowel = 0;
+	}
 }
 
 //How the AI should respond + Effects will be seen
@@ -339,6 +399,7 @@ void SceneText::Respond()
 {
 	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
 	MouseRespond();
+	CatRespond();
 }
 
 void SceneText::Update(double dt)
@@ -410,4 +471,4 @@ void SceneText::Exit()
 
 	// Delete the lights
 	delete lights[0];
-}
+	}

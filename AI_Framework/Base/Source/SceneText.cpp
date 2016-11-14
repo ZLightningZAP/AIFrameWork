@@ -373,7 +373,7 @@ void SceneText::CatFSMUpdate()
 		switch (CatState)
 		{
 		case IDLE:
-			if (Cat.m_hunger <= 80)
+			if (Cat.m_hunger <= 70)
 				CatState = EAT;
 			break;
 		case EAT:

@@ -149,10 +149,12 @@ void SceneText::Init()
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
+	//textObj[0] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
+	//textObj[1] = Create::Text2DObject("mouse state", Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	for (int i = 0; i < 3; ++i)
 	{
 		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-		textObj[i]->SetColor(Color(0, 0, 0));
+		//textObj[i]->SetColor(Color(0, 0, 0));
 	}
 	//textObj[0]->SetText("HELLO WORLD");
 }
@@ -251,10 +253,7 @@ void SceneText::RunFSM(double dt)
 		Female.m_entertain -= 2;
 
 		//Mouse stats
-		if (MouseState == EAT)
-			Mouse.m_hunger -= 10;
-		else
-			Mouse.m_hunger += 10;
+		Mouse.m_hunger += 10;
 
 		//Cat stats
 		if (CatState == EAT)
@@ -289,57 +288,69 @@ void SceneText::RanMousePos()
 	}
 }
 
-void SceneText::MouseRespond()
+void SceneText::MouseRunFSM()
 {
 	switch (MouseState)
 	{
 	case ROAM:
 		if (DAY)
 			MouseState = HIDE;
-
 		else
 		{
-			//RanMousePos();
-			if (WorldObj[4]->ReachPos(wayPoints[9]) == false)
+			if (Mouse.m_hunger >= 80)
 			{
-				WorldObj[4]->MovePos(wayPoints[9], 1);
+				MouseState = EAT;
 			}
-			/*else
-			{
-			RanMousePos();
-			}*/
-			/*if (Mouse.m_hunger >= 50)
-			{
-			MouseState = EAT;
-			}*/
 		}
 		break;
 
 	case HIDE:
+		if (NIGHT)
+			MouseState = ROAM;
+		break;
 
+	case EAT:
+		if (DAY)
+			MouseState = HIDE;
+		else
+		{
+			if (Mouse.m_hunger < 80 || Mouse.m_hunger == 0)
+			{
+				MouseState = ROAM;
+			}
+		}
+		break;
+	}
+}
+
+void SceneText::MouseRespond()
+{
+	MouseRunFSM();
+	switch (MouseState)
+	{
+	case ROAM:
+		//RanMousePos();
+		if (WorldObj[4]->ReachPos(/*MouseNewPos*/wayPoints[9]) == false)
+		{
+			WorldObj[4]->MovePos(/*MouseNewPos*/wayPoints[9], 1);
+		}
+		/*else
+		{
+		RanMousePos();
+		}*/
+		break;
+	case HIDE:
 		if (WorldObj[4]->ReachPos(wayPoints[10]) == false)
 		{
 			WorldObj[4]->MovePos(wayPoints[10], 1);
 		}
-
-		if (NIGHT)
-			MouseState = ROAM;
-
 		break;
-
 	case EAT:
-
-		WorldObj[4]->MovePos(wayPoints[6], 1);
-
-		if (Mouse.m_hunger < 20 || Mouse.m_hunger == 0)
+		if (WorldObj[4]->ReachPos(wayPoints[6]) == false)
 		{
-			MouseState = ROAM;
+			WorldObj[4]->MovePos(wayPoints[6], 1);
 		}
-
-		if (DAY)
-			MouseState = HIDE;
-
-		break;
+		Mouse.m_hunger -= 10;
 	}
 }
 
@@ -433,6 +444,36 @@ void SceneText::Update(double dt)
 	}
 	textObj[0]->SetText(ss.str());
 
+	//Mouse stats
+	std::ostringstream s1;
+	/*switch (MouseState)
+	{
+	case ROAM:
+	s1 << "Roam";
+	break;
+
+	case EAT:
+	s1 << "Eat";
+	break;
+
+	case HIDE:
+	s1 << "Hide";
+	break;
+	}*/
+	if (MouseState == ROAM)
+	{
+		textObj[1]->SetColor(Color(0.0f, 0.0f, 0.0f));
+		s1 << "Roam";
+	}
+	else if (MouseState == EAT)
+		s1 << "Eat";
+
+	else if (MouseState == HIDE)
+		s1 << "Hide";
+
+	textObj[1]->SetText(s1.str());
+	//textObj[1]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z));
+
 	FSMUpdate(dt);
 }
 
@@ -471,4 +512,4 @@ void SceneText::Exit()
 
 	// Delete the lights
 	delete lights[0];
-	}
+}

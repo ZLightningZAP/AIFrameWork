@@ -257,9 +257,14 @@ void SceneText::RunFSM(double dt)
 
 		//Cat stats
 		if (CatState == EAT)
-			Cat.m_hunger += 10;
+			Cat.m_hunger += 20;
 		else
 			Cat.m_hunger -= 10;
+
+		if (CatState == SHIT)
+			Cat.m_bowel -= 40;
+		else
+			Cat.m_bowel += 15;
 
 		TimePast = 0;
 	}
@@ -379,6 +384,7 @@ void SceneText::CatRespond()
 
 void SceneText::CatFSMUpdate()
 {
+	cout << Cat.m_bowel << endl;
 	if (DAY == true)
 	{
 		switch (CatState)
@@ -386,14 +392,19 @@ void SceneText::CatFSMUpdate()
 		case IDLE:
 			if (Cat.m_hunger <= 70)
 				CatState = EAT;
+			else if (Cat.m_bowel >= 60)
+				CatState = SHIT;
 			break;
 		case EAT:
 			if (Cat.m_hunger >= 100)
 				CatState = IDLE;
 			break;
 		case SLEEP:
+			//Dont do anything while sleeping
 			break;
 		case SHIT:
+			if (Cat.m_bowel <= 0)
+				CatState = IDLE;
 			break;
 		}
 	}

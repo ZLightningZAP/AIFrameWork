@@ -196,7 +196,9 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(-380, -150, 1));
 
 	//Male Init
-	//WorldObj[1]->SetPosition(Vector3(wayPoints[2].x, wayPoints[2].y, wayPoints[2].z));
+	WorldObj[1]->SetPosition(wayPoints[1]);
+	Male.m_bowel = 0;
+	Male.m_hunger = 100;
 
 	//FemaleState = IDLE;
 	//WorldObj[2]->SetPosition(wayPoints[0]);
@@ -268,8 +270,6 @@ void SceneText::RunFSM(double dt)
 
 		TimePast = 0;
 	}
-
-	CatFSMUpdate();
 }
 
 void SceneText::RanMousePos()
@@ -361,6 +361,7 @@ void SceneText::MouseRespond()
 
 void SceneText::CatRespond()
 {
+	CatFSMUpdate();
 	switch (CatState)
 	{
 	case IDLE:
@@ -384,7 +385,6 @@ void SceneText::CatRespond()
 
 void SceneText::CatFSMUpdate()
 {
-	cout << Cat.m_bowel << endl;
 	if (DAY == true)
 	{
 		switch (CatState)
@@ -416,12 +416,44 @@ void SceneText::CatFSMUpdate()
 	}
 }
 
+void SceneText::ManRespond()
+{
+	ManFSMUpdate();
+	switch (MaleState)
+	{
+	case IDLE:
+		//Before Kitchen/Couch
+		WorldObj[1]->MovePos(wayPoints[7], 1);
+		break;
+	case EAT:
+		//Go to kitchen
+		WorldObj[1]->MovePos(wayPoints[6], 1);
+		break;
+	case SLEEP:
+		//Go to bedroom
+		WorldObj[1]->MovePos(wayPoints[1], 1);
+		break;
+	case SHIT:
+		//Go to toilet
+		WorldObj[1]->MovePos(wayPoints[2], 1);
+		break;
+	case WORK:
+		//Go to work
+		WorldObj[1]->MovePos(wayPoints[2], 1);
+		break;
+	}
+}
+
+void SceneText::ManFSMUpdate()
+{
+}
+
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
-	//WorldObj[1]->MovePos(Vector3(0, -230, 1), 1);
 	MouseRespond();
 	CatRespond();
+	ManRespond();
 }
 
 void SceneText::Update(double dt)
@@ -519,7 +551,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-	}
+}
 
 	// Delete the lights
 	delete lights[0];

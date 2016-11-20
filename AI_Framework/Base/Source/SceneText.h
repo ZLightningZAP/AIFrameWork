@@ -94,6 +94,8 @@ private:
 
 	void CatRespond();
 	void CatFSMUpdate();
+	void ManRespond();
+	void ManFSMUpdate();
 };
 
 #endif

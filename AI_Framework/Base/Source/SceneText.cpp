@@ -231,7 +231,7 @@ void SceneText::FSMUpdate(double dt)
 void SceneText::RunFSM(double dt)
 {
 	Time += dt;
-	if (Time >= 60)
+	if (Time >= 30)
 	{
 		if (DAY == true)
 		{
@@ -250,12 +250,13 @@ void SceneText::RunFSM(double dt)
 	//Every 5s
 	if (TimePast >= 5)
 	{
-		//Female stats
-		Female.m_clean += 10;
-		Female.m_entertain -= 2;
+		//JENNY UPDATE THIS
+		////Female stats
+		//Female.m_clean += 10;
+		//Female.m_entertain -= 2;
 
-		//Mouse stats
-		Mouse.m_hunger += 10;
+		////Mouse stats
+		//Mouse.m_hunger += 10;
 
 		//Cat stats
 		if (CatState == EAT)
@@ -264,9 +265,11 @@ void SceneText::RunFSM(double dt)
 			Cat.m_hunger -= 10;
 
 		if (CatState == SHIT)
-			Cat.m_bowel -= 40;
+			Cat.m_bowel -= 45;
 		else
 			Cat.m_bowel += 15;
+
+		//Male Stats
 
 		TimePast = 0;
 	}
@@ -366,19 +369,19 @@ void SceneText::CatRespond()
 	{
 	case IDLE:
 		//Go to couch
-		WorldObj[3]->MovePos(wayPoints[5], 1);
+		WorldObj[3]->MovePos(wayPoints[5], 2);
 		break;
 	case EAT:
 		//Go to kitchen
-		WorldObj[3]->MovePos(wayPoints[6], 1);
+		WorldObj[3]->MovePos(wayPoints[6], 2);
 		break;
 	case SLEEP:
 		//Go to pet room
-		WorldObj[3]->MovePos(wayPoints[3], 1);
+		WorldObj[3]->MovePos(wayPoints[3], 2);
 		break;
 	case SHIT:
 		//Go to toilet
-		WorldObj[3]->MovePos(wayPoints[2], 1);
+		WorldObj[3]->MovePos(wayPoints[2], 2);
 		break;
 	}
 }
@@ -390,9 +393,9 @@ void SceneText::CatFSMUpdate()
 		switch (CatState)
 		{
 		case IDLE:
-			if (Cat.m_hunger <= 70)
+			if (Cat.m_hunger <= 90)
 				CatState = EAT;
-			else if (Cat.m_bowel >= 60)
+			else if (Cat.m_bowel >= 45)
 				CatState = SHIT;
 			break;
 		case EAT:
@@ -423,29 +426,66 @@ void SceneText::ManRespond()
 	{
 	case IDLE:
 		//Before Kitchen/Couch
-		WorldObj[1]->MovePos(wayPoints[7], 1);
+		WorldObj[1]->MovePos(wayPoints[7], 2);
 		break;
 	case EAT:
 		//Go to kitchen
-		WorldObj[1]->MovePos(wayPoints[6], 1);
+		WorldObj[1]->MovePos(wayPoints[6], 2);
 		break;
 	case SLEEP:
 		//Go to bedroom
-		WorldObj[1]->MovePos(wayPoints[1], 1);
+		WorldObj[1]->MovePos(wayPoints[1], 2);
 		break;
 	case SHIT:
 		//Go to toilet
-		WorldObj[1]->MovePos(wayPoints[2], 1);
+		WorldObj[1]->MovePos(wayPoints[2], 2);
 		break;
 	case WORK:
 		//Go to work
-		WorldObj[1]->MovePos(wayPoints[2], 1);
+		WorldObj[1]->MovePos(wayPoints[2], 2);
 		break;
 	}
 }
 
 void SceneText::ManFSMUpdate()
 {
+	//If its in the morning
+	if (DAY == true)
+	{
+		//#Logic
+		switch (MaleState)
+		{
+		case IDLE:
+			break;
+		case EAT:
+			break;
+		case SLEEP:
+			break;
+		case SHIT:
+			break;
+		case WORK:
+			break;
+		}
+	}
+	//If it's at night
+	else if (NIGHT == true)
+	{
+		switch (MaleState)
+		{
+		case IDLE:
+			break;
+		case EAT:
+			break;
+		case SLEEP:
+			break;
+		case SHIT:
+			break;
+		case WORK:
+			//AI came back from work
+			MaleState = IDLE;
+			break;
+		}
+	}
 }
 
 //How the AI should respond + Effects will be seen

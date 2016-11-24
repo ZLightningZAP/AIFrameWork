@@ -87,6 +87,7 @@ private:
 	static SceneText* sInstance; // The pointer to the object that gets registered
 
 	SpriteEntity* WorldObj[5];
+	SpriteEntity* StatusBars[4];
 
 	void FSMInit();
 	void RanMousePos();

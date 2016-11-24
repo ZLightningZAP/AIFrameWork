@@ -10,6 +10,7 @@
 #include "MatrixStack.h"
 #include "GenericEntity.h"
 #include <vector>
+#include "MyMath.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -52,6 +53,9 @@ public:
 	int MaleState;
 	int CatState;
 	int MouseState;
+
+	bool MaleWork;
+	bool MaleSleep;
 
 	static const int IDLE = 0; //all characters
 	static const int EAT = 1; //all characters

@@ -197,6 +197,9 @@ void SceneText::FSMInit()
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
+	MaleState = SLEEP;
+	MaleWork = false;
+	MaleSleep = false;
 	Male.m_bowel = 0;
 	Male.m_hunger = 100;
 
@@ -270,6 +273,38 @@ void SceneText::RunFSM(double dt)
 			Cat.m_bowel += 15;
 
 		//Male Stats
+		if (DAY == true)
+		{
+			if (MaleWork == false)
+			{
+				if (MaleState == EAT)
+					Male.m_hunger += 20;
+
+				if (MaleState == SHIT)
+					Male.m_bowel -= 50;
+			}
+			if (MaleWork == true)
+			{
+				Male.m_hunger -= 10;
+				Male.m_bowel += 10;
+			}
+		}
+		else if (NIGHT == true)
+		{
+			if (MaleSleep == false)
+			{
+				if (MaleState == EAT)
+					Male.m_hunger += 30;
+
+				if (MaleState == SHIT)
+					Male.m_bowel -= 50;
+			}
+			if (MaleSleep == true)
+			{
+				Male.m_hunger -= 20;
+				Male.m_bowel += 20;
+			}
+		}
 
 		TimePast = 0;
 	}
@@ -404,6 +439,7 @@ void SceneText::CatFSMUpdate()
 			break;
 		case SLEEP:
 			//Dont do anything while sleeping
+			CatState = IDLE;
 			break;
 		case SHIT:
 			if (Cat.m_bowel <= 0)
@@ -442,7 +478,7 @@ void SceneText::ManRespond()
 		break;
 	case WORK:
 		//Go to work
-		WorldObj[1]->MovePos(wayPoints[2], 2);
+		WorldObj[1]->MovePos(wayPoints[8], 2);
 		break;
 	}
 }
@@ -456,14 +492,28 @@ void SceneText::ManFSMUpdate()
 		switch (MaleState)
 		{
 		case IDLE:
+			MaleSleep = false;
+			MaleWork = false;
+			if (Male.m_hunger <= 50)
+				MaleState = EAT;
+			else if (Male.m_bowel >= 50)
+				MaleState = SHIT;
+			else
+				MaleState = WORK;
 			break;
 		case EAT:
+			if (Male.m_hunger >= 100)
+				MaleState = IDLE;
 			break;
 		case SLEEP:
-			break;
-		case SHIT:
+			MaleState = IDLE;
 			break;
 		case WORK:
+			MaleWork = true;
+			break;
+		case SHIT:
+			if (Male.m_bowel <= 0)
+				MaleState = IDLE;
 			break;
 		}
 	}
@@ -473,12 +523,25 @@ void SceneText::ManFSMUpdate()
 		switch (MaleState)
 		{
 		case IDLE:
+			MaleSleep = false;
+			MaleWork = false;
+			if (Male.m_hunger <= 90)
+				MaleState = EAT;
+			else if (Male.m_bowel >= 50)
+				MaleState = SHIT;
+			else
+				MaleState = SLEEP;
 			break;
 		case EAT:
+			if (Male.m_hunger >= 100)
+				MaleState = IDLE;
 			break;
 		case SLEEP:
+			MaleSleep = true;
 			break;
 		case SHIT:
+			if (Male.m_bowel <= 0)
+				MaleState = IDLE;
 			break;
 		case WORK:
 			//AI came back from work
@@ -591,7 +654,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-}
+	}
 
 	// Delete the lights
 	delete lights[0];

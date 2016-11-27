@@ -159,12 +159,34 @@ void SceneText::Init()
 	//textObj[0]->SetText("HELLO WORLD");
 }
 
+void SceneText::RanMousePos()
+{
+	//Randomise where mouse goes
+	MousePos = rand() % 3;
+	switch (MousePos)
+	{
+	case 0:
+		MouseNewPos = wayPoints[0];
+		break;
+	case 1:
+		MouseNewPos = wayPoints[4];
+		break;
+	case 2:
+		MouseNewPos = wayPoints[5];
+		break;
+	case 3:
+		MouseNewPos = wayPoints[9];
+		break;
+	}
+}
+
 //All AI Init Here
 void SceneText::FSMInit()
 {
 	//Day/Night Cycle
 	DAY = true;
 	NIGHT = false;
+	TVon = false;
 	Time = 0;
 	TimePast = 0;
 
@@ -194,22 +216,25 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(0, -230, 1));
 	//Mouse Hole [10]
 	wayPoints.push_back(Vector3(-380, -150, 1));
+	//Infront of TV [11]
+	wayPoints.push_back(Vector3(-120, -43, 1));
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
 	Male.m_bowel = 0;
 	Male.m_hunger = 100;
 
-	//FemaleState = IDLE;
-	//WorldObj[2]->SetPosition(wayPoints[0]);
+	//Female Init
+	WorldObj[2]->SetPosition(wayPoints[0]);
+	FemaleState = IDLE;
 	Female.m_bowel = 0;
-	Female.m_clean = 100;
 	Female.m_entertain = 100;
 	Female.m_hunger = 0;
 
 	//Mouse Init
-	MouseState = HIDE;
 	WorldObj[4]->SetPosition(wayPoints[10]);
+	MouseState = HIDE;
+	RanMousePos();
 	Mouse.m_hunger = 0;
 
 	//Cat Init
@@ -247,16 +272,85 @@ void SceneText::RunFSM(double dt)
 	}
 
 	TimePast += dt;
+
+	//Female Stats control
+	if (Female.m_bowel >= 100)
+	{
+		Female.m_bowel = 100;
+	}
+	else if (Female.m_bowel <= 0)
+	{
+		Female.m_bowel = 0;
+	}
+
+	if (Female.m_entertain >= 100)
+	{
+		Female.m_entertain = 100;
+	}
+	else if (Female.m_entertain <= 0)
+	{
+		Female.m_entertain = 0;
+	}
+
+	if (Female.m_hunger >= 100)
+	{
+		Female.m_hunger = 100;
+	}
+	else if (Female.m_hunger <= 0)
+	{
+		Female.m_hunger = 0;
+	}
+
+	//Mouse Stats control
+	if (Mouse.m_hunger >= 100)
+	{
+		Mouse.m_hunger = 100;
+	}
+	else if (Mouse.m_hunger <= 0)
+	{
+		Mouse.m_hunger = 0;
+	}
+
 	//Every 5s
 	if (TimePast >= 5)
 	{
-		//JENNY UPDATE THIS
-		////Female stats
-		//Female.m_clean += 10;
-		//Female.m_entertain -= 2;
+		//Female stats
+		if (FemaleState == WATCH && WorldObj[2]->ReachPos(wayPoints[5]))
+		{
+			Female.m_entertain += 20;
+		}
+		else
+		{
+			Female.m_entertain -= 2;
+		}
 
-		////Mouse stats
-		//Mouse.m_hunger += 10;
+		if (FemaleState == SHIT && WorldObj[2]->ReachPos(wayPoints[2]))
+		{
+			Female.m_bowel -= 30;
+		}
+
+		if (FemaleState == EAT)
+		{
+			if (WorldObj[2]->ReachPos(wayPoints[6]))
+			{
+				Female.m_bowel += 10;
+				Female.m_hunger -= 10;
+			}
+		}
+		else
+		{
+			Female.m_hunger += 2;
+		}
+
+		//Mouse stats
+		if (MouseState == EAT)
+		{
+			Mouse.m_hunger -= 10;
+		}
+		else
+		{
+			Mouse.m_hunger += 5;
+		}
 
 		//Cat stats
 		if (CatState == EAT)
@@ -275,28 +369,7 @@ void SceneText::RunFSM(double dt)
 	}
 }
 
-void SceneText::RanMousePos()
-{
-	//Randomise where mouse goes
-	MousePos = rand() % 3;
-	switch (MousePos)
-	{
-	case 0:
-		MouseNewPos = wayPoints[0];
-		break;
-	case 1:
-		MouseNewPos = wayPoints[4];
-		break;
-	case 2:
-		MouseNewPos = wayPoints[5];
-		break;
-	case 3:
-		MouseNewPos = wayPoints[9];
-		break;
-	}
-}
-
-void SceneText::MouseRunFSM()
+void SceneText::MouseFSMUpdate()
 {
 	switch (MouseState)
 	{
@@ -306,9 +379,7 @@ void SceneText::MouseRunFSM()
 		else
 		{
 			if (Mouse.m_hunger >= 80)
-			{
 				MouseState = EAT;
-			}
 		}
 		break;
 
@@ -322,10 +393,8 @@ void SceneText::MouseRunFSM()
 			MouseState = HIDE;
 		else
 		{
-			if (Mouse.m_hunger < 80 || Mouse.m_hunger == 0)
-			{
+			if (Mouse.m_hunger < 50)
 				MouseState = ROAM;
-			}
 		}
 		break;
 	}
@@ -333,32 +402,184 @@ void SceneText::MouseRunFSM()
 
 void SceneText::MouseRespond()
 {
-	MouseRunFSM();
+	MouseFSMUpdate();
 	switch (MouseState)
 	{
 	case ROAM:
-		//RanMousePos();
-		if (WorldObj[4]->ReachPos(/*MouseNewPos*/wayPoints[9]) == false)
+		if (WorldObj[4]->ReachPos(MouseNewPos))
 		{
-			WorldObj[4]->MovePos(/*MouseNewPos*/wayPoints[9], 1);
+			RanMousePos();
 		}
-		/*else
+		else
 		{
-		RanMousePos();
-		}*/
+			WorldObj[4]->MovePos(MouseNewPos, 1);
+		}
 		break;
+
 	case HIDE:
-		if (WorldObj[4]->ReachPos(wayPoints[10]) == false)
+		WorldObj[4]->MovePos(wayPoints[10], 3);
+		break;
+
+	case EAT:
+		WorldObj[4]->MovePos(wayPoints[6], 2);
+	}
+}
+
+void SceneText::FemaleFSMUpdate()
+{
+	//importance of action: SHIT->EAT->CLEAN->WATCH
+	switch (FemaleState)
+	{
+	case IDLE:
+		if (DAY)
 		{
-			WorldObj[4]->MovePos(wayPoints[10], 1);
+			if (Female.m_bowel >= 80 && Female.m_hunger < 100) //Female not dying of hunger
+			{
+				FemaleState = SHIT;
+			}
+
+			if (Female.m_hunger >= 80 && Female.m_bowel < 100) //Female not exploding with shit
+			{
+				FemaleState = EAT;
+			}
+
+			if (Female.m_entertain <= 40 && Female.m_bowel < 80 && Female.m_hunger < 80) //Female's hunger and bowel are normal
+			{
+				FemaleState = WATCH;
+			}
+		}
+		else
+			FemaleState = SLEEP;
+		break;
+
+	case EAT:
+		if (DAY)
+		{
+			if (Female.m_bowel >= 80 && Female.m_bowel > Female.m_hunger) //Female needs to go to the toilet more than she needs to eat
+			{
+				FemaleState = SHIT;
+			}
+
+			if (Female.m_entertain <= 40 && Female.m_hunger <= 20 && Female.m_bowel < 80) //Female's hunger and bowel are normal, needs entertainment
+			{
+				FemaleState = WATCH;
+			}
+
+			if (Female.m_bowel < 80 && Female.m_entertain > 40 && Female.m_hunger < 80) //Female's stats are normal
+			{
+				FemaleState = IDLE;
+			}
+		}
+		else
+			if (Female.m_hunger < 100) //Female not dying from hunger
+				FemaleState = SLEEP;
+		break;
+
+	case SHIT:
+		if (Female.m_bowel < 80) //Female's bowel is normal
+		{
+			if (DAY)
+			{
+				if (Female.m_hunger >= 80) //Hungry
+				{
+					FemaleState = EAT;
+				}
+				else //Not hungry
+				{
+					if (Female.m_entertain <= 40) //Bored
+					{
+						FemaleState = WATCH;
+					}
+				}
+
+				if (Female.m_bowel < 80 && Female.m_entertain > 40) //Female's stats are normal
+				{
+					FemaleState = IDLE;
+				}
+			}
+
+			else
+			{
+				FemaleState = SLEEP;
+			}
 		}
 		break;
-	case EAT:
-		if (WorldObj[4]->ReachPos(wayPoints[6]) == false)
+
+	case WATCH:
+		if (DAY)
 		{
-			WorldObj[4]->MovePos(wayPoints[6], 1);
+			if (Female.m_hunger >= 80 || Female.m_bowel >= 80)
+			{
+				if (Female.m_bowel > Female.m_hunger) //see if Female is more urgent to eat or go to the toilet
+					FemaleState = SHIT;
+				else
+					FemaleState = EAT;
+			}
+			else
+			{
+				if (Female.m_entertain > 40) // Female's stats are back to normal
+					FemaleState = IDLE;
+			}
 		}
-		Mouse.m_hunger -= 10;
+		else
+			FemaleState = SLEEP;
+		break;
+
+	case SLEEP:
+		if (DAY)
+			FemaleState = IDLE;
+		break;
+	}
+}
+
+void SceneText::FemaleRespond()
+{
+	FemaleFSMUpdate();
+
+	if (FemaleState == WATCH)
+	{
+		if (TVon)
+		{
+			WorldObj[2]->MovePos(wayPoints[5], 1); //tv is on, go to couch
+		}
+		else
+		{
+			WorldObj[2]->MovePos(wayPoints[11], 1); //on tv
+			TVon = true;
+		}
+	}
+	else //not watching tv
+	{
+		if (TVon) //tv is on
+		{
+			WorldObj[2]->MovePos(wayPoints[11], 1); //off tv
+			TVon = false;
+		}
+		else //tv is off
+		{
+			switch (FemaleState)
+			{
+			case IDLE:
+				if (WorldObj[2]->GetPosition() != wayPoints[5])
+				{
+					//move to couch to wait for something to do
+					WorldObj[2]->MovePos(wayPoints[5], 1);
+				}
+				break;
+
+			case EAT:
+				WorldObj[2]->MovePos(wayPoints[6], 1);
+				break;
+
+			case SHIT:
+				WorldObj[2]->MovePos(wayPoints[2], 1);
+				break;
+
+			case SLEEP:
+				WorldObj[2]->MovePos(wayPoints[1], 1);
+				break;
+			}
+		}
 	}
 }
 
@@ -492,6 +713,7 @@ void SceneText::ManFSMUpdate()
 void SceneText::Respond()
 {
 	MouseRespond();
+	FemaleRespond();
 	CatRespond();
 	ManRespond();
 }
@@ -529,20 +751,6 @@ void SceneText::Update(double dt)
 
 	//Mouse stats
 	std::ostringstream s1;
-	/*switch (MouseState)
-	{
-	case ROAM:
-	s1 << "Roam";
-	break;
-
-	case EAT:
-	s1 << "Eat";
-	break;
-
-	case HIDE:
-	s1 << "Hide";
-	break;
-	}*/
 	if (MouseState == ROAM)
 	{
 		textObj[1]->SetColor(Color(0.0f, 0.0f, 0.0f));
@@ -591,7 +799,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-}
+	}
 
 	// Delete the lights
 	delete lights[0];

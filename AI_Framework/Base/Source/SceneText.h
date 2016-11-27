@@ -34,13 +34,33 @@ public:
 	bool DAY;
 	bool NIGHT;
 	double Time;
+	//if TV is on
+	bool TVon;
 	double TimePast;
 
 	struct Character{
 		int m_hunger;
 		int m_bowel;
-		int m_clean;
 		int m_entertain;
+	};
+
+	struct Cleaniness{
+		int r_bedroom;
+		int r_pet;
+		int r_kitchen;
+		int r_toilet;
+	};
+
+	enum Actions{
+		IDLE, //all characters
+		EAT, //all characters
+		SHIT, //female, male, cat
+		SLEEP, //female, male, cat
+		WORK, //male
+		CLEAN, //female
+		WATCH, //female
+		HIDE, //mouse
+		ROAM //mouse
 	};
 
 	Character Female;
@@ -52,16 +72,6 @@ public:
 	int MaleState;
 	int CatState;
 	int MouseState;
-
-	static const int IDLE = 0; //all characters
-	static const int EAT = 1; //all characters
-	static const int SHIT = 2; //female, male, cat
-	static const int SLEEP = 3; //female, male, cat
-	static const int WORK = 4; //male
-	static const int CLEAN = 5; //female
-	static const int WATCH = 6; //female
-	static const int HIDE = 7; //mouse
-	static const int ROAM = 8; //mouse
 
 	int MousePos;
 	Vector3 MouseNewPos;
@@ -85,12 +95,15 @@ private:
 	SpriteEntity* WorldObj[5];
 
 	void FSMInit();
-	void RanMousePos();
-	void MouseRespond();
-	void MouseRunFSM();
 	void RunFSM(double dt);
 	void FSMUpdate(double dt);
 	void Respond();
+
+	void RanMousePos();
+	void MouseRespond();
+	void MouseFSMUpdate();
+	void FemaleRespond();
+	void FemaleFSMUpdate();
 
 	void CatRespond();
 	void CatFSMUpdate();

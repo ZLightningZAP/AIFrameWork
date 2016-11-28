@@ -149,7 +149,7 @@ void SceneText::Init()
 	//Creating the status bar for each AI
 	for (int i = 0; i < 3; ++i)
 	{
-		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 100.0f, 1.0f), Vector3(130.0f, 32.0f, 1.0f));
+		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
 	}
 
 	FSMInit();
@@ -161,10 +161,9 @@ void SceneText::Init()
 	float halfFontSize = fontSize / 2.0f;
 	//textObj[0] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	//textObj[1] = Create::Text2DObject("mouse state", Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-		//textObj[i]->SetColor(Color(0, 0, 0));
 	}
 	//textObj[0]->SetText("HELLO WORLD");
 }
@@ -429,6 +428,7 @@ void SceneText::CatRespond()
 		WorldObj[3]->MovePos(wayPoints[2], 2);
 		break;
 	}
+	StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
 }
 
 void SceneText::CatFSMUpdate()
@@ -491,6 +491,7 @@ void SceneText::ManRespond()
 		WorldObj[1]->MovePos(wayPoints[8], 2);
 		break;
 	}
+	StatusBars[1]->SetPosition(Vector3(WorldObj[1]->GetPosition().x, WorldObj[1]->GetPosition().y + 45, WorldObj[1]->GetPosition().z));
 }
 
 void SceneText::ManFSMUpdate()
@@ -602,20 +603,6 @@ void SceneText::Update(double dt)
 
 	//Mouse stats
 	std::ostringstream s1;
-	/*switch (MouseState)
-	{
-	case ROAM:
-	s1 << "Roam";
-	break;
-
-	case EAT:
-	s1 << "Eat";
-	break;
-
-	case HIDE:
-	s1 << "Hide";
-	break;
-	}*/
 	if (MouseState == ROAM)
 	{
 		textObj[1]->SetColor(Color(0.0f, 0.0f, 0.0f));
@@ -628,7 +615,36 @@ void SceneText::Update(double dt)
 		s1 << "Hide";
 
 	textObj[1]->SetText(s1.str());
-	//textObj[1]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z));
+
+	//Cat Stats
+	std::ostringstream s2;
+	if (CatState == IDLE)
+		s2 << "Idle";
+	else if (CatState == EAT)
+		s2 << "Eat";
+	else if (CatState == SHIT)
+		s2 << "Shit";
+	else if (CatState == SLEEP)
+		s2 << "Sleep";
+	//Update position of the string with the status bar
+	textObj[2]->SetText(s2.str());
+	textObj[2]->SetPosition(Vector3(StatusBars[0]->GetPosition().x - 45, StatusBars[0]->GetPosition().y, StatusBars[0]->GetPosition().z + 1));
+
+	//Male Stats
+	std::ostringstream s3;
+	if (MaleState == IDLE)
+		s3 << "Idle";
+	else if (MaleState == EAT)
+		s3 << "Eat";
+	else if (MaleState == SHIT)
+		s3 << "Shit";
+	else if (MaleState == SLEEP)
+		s3 << "Sleep";
+	else if (MaleState == WORK)
+		s3 << "Work";
+	//Update position of the string with the status bar
+	textObj[3]->SetText(s3.str());
+	textObj[3]->SetPosition(Vector3(StatusBars[1]->GetPosition().x - 45, StatusBars[1]->GetPosition().y, StatusBars[1]->GetPosition().z + 1));
 
 	FSMUpdate(dt);
 }
@@ -664,7 +680,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-	}
+}
 
 	// Delete the lights
 	delete lights[0];

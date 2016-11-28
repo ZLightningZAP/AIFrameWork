@@ -10,6 +10,7 @@
 #include "MatrixStack.h"
 #include "GenericEntity.h"
 #include <vector>
+#include "MyMath.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -73,6 +74,22 @@ public:
 	int CatState;
 	int MouseState;
 
+<<<<<<< HEAD
+=======
+	bool MaleWork;
+	bool MaleSleep;
+
+	static const int IDLE = 0; //all characters
+	static const int EAT = 1; //all characters
+	static const int SHIT = 2; //female, male, cat
+	static const int SLEEP = 3; //female, male, cat
+	static const int WORK = 4; //male
+	static const int CLEAN = 5; //female
+	static const int WATCH = 6; //female
+	static const int HIDE = 7; //mouse
+	static const int ROAM = 8; //mouse
+
+>>>>>>> 746480ac5855e2cdbdf26d7c68b75ad7c1d071e2
 	int MousePos;
 	Vector3 MouseNewPos;
 
@@ -83,7 +100,7 @@ private:
 	CPlayerInfo* playerInfo;
 	GroundEntity* groundEntity;
 	FPSCamera camera;
-	TextEntity* textObj[3];
+	TextEntity* textObj[4];
 	Light* lights[2];
 
 	vector <Vector3> wayPoints;
@@ -93,6 +110,7 @@ private:
 	static SceneText* sInstance; // The pointer to the object that gets registered
 
 	SpriteEntity* WorldObj[5];
+	SpriteEntity* StatusBars[4];
 
 	void FSMInit();
 	void RunFSM(double dt);

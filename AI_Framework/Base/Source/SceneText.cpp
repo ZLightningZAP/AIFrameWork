@@ -133,14 +133,24 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Mouse", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Mouse")->textureID = LoadTGA("Image//Mouse.tga");
 
+	//Status Bar Image
+	MeshBuilder::GetInstance()->GenerateQuad("StatusBar", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("StatusBar")->textureID = LoadTGA("Image//StatusBar.tga");
+
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
-	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
-	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 50.0f));
+	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
+	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
+	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
+	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
+
+	//Creating the status bar for each AI
+	for (int i = 0; i < 3; ++i)
+	{
+		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
+	}
 
 	FSMInit();
 
@@ -151,10 +161,9 @@ void SceneText::Init()
 	float halfFontSize = fontSize / 2.0f;
 	//textObj[0] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	//textObj[1] = Create::Text2DObject("mouse state", Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-		//textObj[i]->SetColor(Color(0, 0, 0));
 	}
 	//textObj[0]->SetText("HELLO WORLD");
 }
@@ -221,6 +230,9 @@ void SceneText::FSMInit()
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
+	MaleState = SLEEP;
+	MaleWork = false;
+	MaleSleep = false;
 	Male.m_bowel = 0;
 	Male.m_hunger = 100;
 
@@ -364,6 +376,38 @@ void SceneText::RunFSM(double dt)
 			Cat.m_bowel += 15;
 
 		//Male Stats
+		if (DAY == true)
+		{
+			if (MaleWork == false)
+			{
+				if (MaleState == EAT)
+					Male.m_hunger += 20;
+
+				if (MaleState == SHIT)
+					Male.m_bowel -= 50;
+			}
+			if (MaleWork == true)
+			{
+				Male.m_hunger -= 10;
+				Male.m_bowel += 10;
+			}
+		}
+		else if (NIGHT == true)
+		{
+			if (MaleSleep == false)
+			{
+				if (MaleState == EAT)
+					Male.m_hunger += 30;
+
+				if (MaleState == SHIT)
+					Male.m_bowel -= 50;
+			}
+			if (MaleSleep == true)
+			{
+				Male.m_hunger -= 20;
+				Male.m_bowel += 20;
+			}
+		}
 
 		TimePast = 0;
 	}
@@ -605,6 +649,7 @@ void SceneText::CatRespond()
 		WorldObj[3]->MovePos(wayPoints[2], 2);
 		break;
 	}
+	StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
 }
 
 void SceneText::CatFSMUpdate()
@@ -625,6 +670,7 @@ void SceneText::CatFSMUpdate()
 			break;
 		case SLEEP:
 			//Dont do anything while sleeping
+			CatState = IDLE;
 			break;
 		case SHIT:
 			if (Cat.m_bowel <= 0)
@@ -663,9 +709,10 @@ void SceneText::ManRespond()
 		break;
 	case WORK:
 		//Go to work
-		WorldObj[1]->MovePos(wayPoints[2], 2);
+		WorldObj[1]->MovePos(wayPoints[8], 2);
 		break;
 	}
+	StatusBars[1]->SetPosition(Vector3(WorldObj[1]->GetPosition().x, WorldObj[1]->GetPosition().y + 45, WorldObj[1]->GetPosition().z));
 }
 
 void SceneText::ManFSMUpdate()
@@ -677,14 +724,28 @@ void SceneText::ManFSMUpdate()
 		switch (MaleState)
 		{
 		case IDLE:
+			MaleSleep = false;
+			MaleWork = false;
+			if (Male.m_hunger <= 50)
+				MaleState = EAT;
+			else if (Male.m_bowel >= 50)
+				MaleState = SHIT;
+			else
+				MaleState = WORK;
 			break;
 		case EAT:
+			if (Male.m_hunger >= 100)
+				MaleState = IDLE;
 			break;
 		case SLEEP:
-			break;
-		case SHIT:
+			MaleState = IDLE;
 			break;
 		case WORK:
+			MaleWork = true;
+			break;
+		case SHIT:
+			if (Male.m_bowel <= 0)
+				MaleState = IDLE;
 			break;
 		}
 	}
@@ -694,12 +755,25 @@ void SceneText::ManFSMUpdate()
 		switch (MaleState)
 		{
 		case IDLE:
+			MaleSleep = false;
+			MaleWork = false;
+			if (Male.m_hunger <= 90)
+				MaleState = EAT;
+			else if (Male.m_bowel >= 50)
+				MaleState = SHIT;
+			else
+				MaleState = SLEEP;
 			break;
 		case EAT:
+			if (Male.m_hunger >= 100)
+				MaleState = IDLE;
 			break;
 		case SLEEP:
+			MaleSleep = true;
 			break;
 		case SHIT:
+			if (Male.m_bowel <= 0)
+				MaleState = IDLE;
 			break;
 		case WORK:
 			//AI came back from work
@@ -763,7 +837,36 @@ void SceneText::Update(double dt)
 		s1 << "Hide";
 
 	textObj[1]->SetText(s1.str());
-	//textObj[1]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z));
+
+	//Cat Stats
+	std::ostringstream s2;
+	if (CatState == IDLE)
+		s2 << "Idle";
+	else if (CatState == EAT)
+		s2 << "Eat";
+	else if (CatState == SHIT)
+		s2 << "Shit";
+	else if (CatState == SLEEP)
+		s2 << "Sleep";
+	//Update position of the string with the status bar
+	textObj[2]->SetText(s2.str());
+	textObj[2]->SetPosition(Vector3(StatusBars[0]->GetPosition().x - 45, StatusBars[0]->GetPosition().y, StatusBars[0]->GetPosition().z + 1));
+
+	//Male Stats
+	std::ostringstream s3;
+	if (MaleState == IDLE)
+		s3 << "Idle";
+	else if (MaleState == EAT)
+		s3 << "Eat";
+	else if (MaleState == SHIT)
+		s3 << "Shit";
+	else if (MaleState == SLEEP)
+		s3 << "Sleep";
+	else if (MaleState == WORK)
+		s3 << "Work";
+	//Update position of the string with the status bar
+	textObj[3]->SetText(s3.str());
+	textObj[3]->SetPosition(Vector3(StatusBars[1]->GetPosition().x - 45, StatusBars[1]->GetPosition().y, StatusBars[1]->GetPosition().z + 1));
 
 	FSMUpdate(dt);
 }

@@ -147,7 +147,7 @@ void SceneText::Init()
 	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 
 	//Creating the status bar for each AI
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
 	}
@@ -161,7 +161,7 @@ void SceneText::Init()
 	float halfFontSize = fontSize / 2.0f;
 	//textObj[0] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	//textObj[1] = Create::Text2DObject("mouse state", Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	}
@@ -196,6 +196,7 @@ void SceneText::FSMInit()
 	DAY = true;
 	NIGHT = false;
 	TVon = false;
+
 	Time = 0;
 	TimePast = 0;
 
@@ -227,6 +228,12 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(-380, -150, 1));
 	//Infront of TV [11]
 	wayPoints.push_back(Vector3(-120, -43, 1));
+	//Female side of couch [12]
+	wayPoints.push_back(Vector3(-280, -63, 1));
+	//Female side of bed [13]
+	wayPoints.push_back(Vector3(-120, 220, 1));
+	//Female side of couch [14]
+	wayPoints.push_back(Vector3(-230, -280, 1));
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
@@ -237,7 +244,7 @@ void SceneText::FSMInit()
 	Male.m_hunger = 100;
 
 	//Female Init
-	WorldObj[2]->SetPosition(wayPoints[0]);
+	WorldObj[2]->SetPosition(wayPoints[12]);
 	FemaleState = IDLE;
 	Female.m_bowel = 0;
 	Female.m_entertain = 100;
@@ -285,34 +292,6 @@ void SceneText::RunFSM(double dt)
 
 	TimePast += dt;
 
-	//Female Stats control
-	if (Female.m_bowel >= 100)
-	{
-		Female.m_bowel = 100;
-	}
-	else if (Female.m_bowel <= 0)
-	{
-		Female.m_bowel = 0;
-	}
-
-	if (Female.m_entertain >= 100)
-	{
-		Female.m_entertain = 100;
-	}
-	else if (Female.m_entertain <= 0)
-	{
-		Female.m_entertain = 0;
-	}
-
-	if (Female.m_hunger >= 100)
-	{
-		Female.m_hunger = 100;
-	}
-	else if (Female.m_hunger <= 0)
-	{
-		Female.m_hunger = 0;
-	}
-
 	//Mouse Stats control
 	if (Mouse.m_hunger >= 100)
 	{
@@ -327,13 +306,13 @@ void SceneText::RunFSM(double dt)
 	if (TimePast >= 5)
 	{
 		//Female stats
-		if (FemaleState == WATCH && WorldObj[2]->ReachPos(wayPoints[5]))
+		if (FemaleState == WATCH && WorldObj[2]->ReachPos(wayPoints[12]))
 		{
 			Female.m_entertain += 20;
 		}
 		else
 		{
-			Female.m_entertain -= 2;
+			Female.m_entertain -= 10;
 		}
 
 		if (FemaleState == SHIT && WorldObj[2]->ReachPos(wayPoints[2]))
@@ -351,7 +330,7 @@ void SceneText::RunFSM(double dt)
 		}
 		else
 		{
-			Female.m_hunger += 2;
+			Female.m_hunger += 20;
 		}
 
 		//Mouse stats
@@ -466,7 +445,10 @@ void SceneText::MouseRespond()
 
 	case EAT:
 		WorldObj[4]->MovePos(wayPoints[6], 2);
+		break;
 	}
+
+	StatusBars[2]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 45, WorldObj[4]->GetPosition().z));
 }
 
 void SceneText::FemaleFSMUpdate()
@@ -477,19 +459,17 @@ void SceneText::FemaleFSMUpdate()
 	case IDLE:
 		if (DAY)
 		{
-			if (Female.m_bowel >= 80 && Female.m_hunger < 100) //Female not dying of hunger
+			if (Female.m_bowel >= 80 || Female.m_hunger >= 80) //Female hungry or needs to go toilet
 			{
-				FemaleState = SHIT;
+				if (Female.m_bowel > Female.m_hunger)
+					FemaleState = SHIT;
+				else
+					FemaleState = EAT;
 			}
-
-			if (Female.m_hunger >= 80 && Female.m_bowel < 100) //Female not exploding with shit
+			else //Female's hunger and bowel are normal
 			{
-				FemaleState = EAT;
-			}
-
-			if (Female.m_entertain <= 40 && Female.m_bowel < 80 && Female.m_hunger < 80) //Female's hunger and bowel are normal
-			{
-				FemaleState = WATCH;
+				if (Female.m_entertain <= 40)
+					FemaleState = WATCH;
 			}
 		}
 		else
@@ -515,8 +495,10 @@ void SceneText::FemaleFSMUpdate()
 			}
 		}
 		else
+		{
 			if (Female.m_hunger < 100) //Female not dying from hunger
 				FemaleState = SLEEP;
+		}
 		break;
 
 	case SHIT:
@@ -531,22 +513,17 @@ void SceneText::FemaleFSMUpdate()
 				else //Not hungry
 				{
 					if (Female.m_entertain <= 40) //Bored
-					{
 						FemaleState = WATCH;
-					}
-				}
-
-				if (Female.m_bowel < 80 && Female.m_entertain > 40) //Female's stats are normal
-				{
-					FemaleState = IDLE;
+					else
+						FemaleState = IDLE;
 				}
 			}
-
 			else
 			{
 				FemaleState = SLEEP;
 			}
 		}
+
 		break;
 
 	case WATCH:
@@ -584,12 +561,13 @@ void SceneText::FemaleRespond()
 	{
 		if (TVon)
 		{
-			WorldObj[2]->MovePos(wayPoints[5], 1); //tv is on, go to couch
+			WorldObj[2]->MovePos(wayPoints[12], 1); //tv is on, go to couch
 		}
 		else
 		{
 			WorldObj[2]->MovePos(wayPoints[11], 1); //on tv
-			TVon = true;
+			if (WorldObj[2]->GetPosition() == wayPoints[11])
+				TVon = true;
 		}
 	}
 	else //not watching tv
@@ -604,10 +582,10 @@ void SceneText::FemaleRespond()
 			switch (FemaleState)
 			{
 			case IDLE:
-				if (WorldObj[2]->GetPosition() != wayPoints[5])
+				if (WorldObj[2]->GetPosition() != wayPoints[12])
 				{
 					//move to couch to wait for something to do
-					WorldObj[2]->MovePos(wayPoints[5], 1);
+					WorldObj[2]->MovePos(wayPoints[12], 1);
 				}
 				break;
 
@@ -620,11 +598,13 @@ void SceneText::FemaleRespond()
 				break;
 
 			case SLEEP:
-				WorldObj[2]->MovePos(wayPoints[1], 1);
+				WorldObj[2]->MovePos(wayPoints[13], 1);
 				break;
 			}
 		}
 	}
+
+	StatusBars[3]->SetPosition(Vector3(WorldObj[2]->GetPosition().x, WorldObj[2]->GetPosition().y + 45, WorldObj[2]->GetPosition().z));
 }
 
 void SceneText::CatRespond()
@@ -786,6 +766,9 @@ void SceneText::ManFSMUpdate()
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
+	//TV status
+	StatusBars[4]->SetPosition(wayPoints[14]);
+
 	MouseRespond();
 	FemaleRespond();
 	CatRespond();
@@ -795,7 +778,7 @@ void SceneText::Respond()
 void SceneText::Update(double dt)
 {
 	// Update our entities
-	EntityManager::GetInstance()->Update(dt);
+	//EntityManager::GetInstance()->Update(dt);
 
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
@@ -826,17 +809,30 @@ void SceneText::Update(double dt)
 	//Mouse stats
 	std::ostringstream s1;
 	if (MouseState == ROAM)
-	{
-		textObj[1]->SetColor(Color(0.0f, 0.0f, 0.0f));
 		s1 << "Roam";
-	}
 	else if (MouseState == EAT)
 		s1 << "Eat";
-
 	else if (MouseState == HIDE)
 		s1 << "Hide";
 
 	textObj[1]->SetText(s1.str());
+	textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x - 35, StatusBars[2]->GetPosition().y, StatusBars[2]->GetPosition().z + 1));
+
+	//Female stats
+	std::ostringstream s4;
+	if (FemaleState == IDLE)
+		s4 << "Idle";
+	else if (FemaleState == EAT)
+		s4 << "Eat";
+	else if (FemaleState == SHIT)
+		s4 << "Shit";
+	else if (FemaleState == SLEEP)
+		s4 << "Sleep";
+	else if (FemaleState == WATCH)
+		s4 << "Watch Tv";
+
+	textObj[4]->SetText(s4.str());
+	textObj[4]->SetPosition(Vector3(StatusBars[3]->GetPosition().x - 45, StatusBars[3]->GetPosition().y, StatusBars[3]->GetPosition().z + 1));
 
 	//Cat Stats
 	std::ostringstream s2;
@@ -867,6 +863,14 @@ void SceneText::Update(double dt)
 	//Update position of the string with the status bar
 	textObj[3]->SetText(s3.str());
 	textObj[3]->SetPosition(Vector3(StatusBars[1]->GetPosition().x - 45, StatusBars[1]->GetPosition().y, StatusBars[1]->GetPosition().z + 1));
+
+	std::ostringstream s5;
+	if (TVon)
+		s5 << "On";
+	else
+		s5 << "Off";
+	textObj[5]->SetText(s5.str());
+	textObj[5]->SetPosition(wayPoints[14] + Vector3(-30, -4, 2));
 
 	FSMUpdate(dt);
 }

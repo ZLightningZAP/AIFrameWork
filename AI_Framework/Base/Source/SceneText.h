@@ -61,6 +61,7 @@ public:
 
 	int MousePos;
 	Vector3 MouseNewPos;
+	MessageBoard messageboard;
 
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager

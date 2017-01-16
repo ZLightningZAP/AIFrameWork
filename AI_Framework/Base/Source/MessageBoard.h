@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MESSAGE_BOARD_H
+#define MESSAGE_BOARD_H
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -11,12 +13,15 @@ public:
 
 	void Reset();
 	void SetMessage(string _message);
-	string GetMessage();
+	string GetMsg();
 	void SetFromLabel(string _fromlabel);
 	string GetFromLabel();
 	void SetToLabel(string _tolabel);
 	string GetToLabel();
 
 private:
-	string Message, FromLabel, ToLabel;
+	string Message;
+	string FromLabel;
+	string ToLabel;
 };
+#endif

@@ -2,6 +2,7 @@
 
 MessageBoard::MessageBoard()
 {
+	Reset();
 }
 
 MessageBoard::~MessageBoard()
@@ -13,7 +14,7 @@ void MessageBoard::SetMessage(string _message)
 	Message = _message;
 }
 
-string MessageBoard::GetMessage()
+string MessageBoard::GetMsg()
 {
 	return Message;
 }

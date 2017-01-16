@@ -140,17 +140,17 @@ void SceneText::Init()
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
-	Create::Sprite2DObject("Background", Vector3(0.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
+	Create::Sprite2DObject("Background", Vector3(-300.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
 	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 
 	//Creating the status bar for each AI
-	//for (int i = 0; i < 4; ++i)
-	//{
-	//	StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
-	//}
+	for (int i = 0; i < 4; ++i)
+	{
+		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, -1.0f), Vector3(130.0f, 25.0f, 1.0f));
+	}
 
 	FSMInit();
 
@@ -201,36 +201,36 @@ void SceneText::FSMInit()
 	//Starting Position[0]
 	wayPoints.push_back(Vector3(1, 1, 1));
 	//Bedroom[1]
-	wayPoints.push_back(Vector3(0, 220, 1));
+	wayPoints.push_back(Vector3(-300, 220, 1));
 	//////////////////////////////////////////////////////////////////
 	//Toilet[2]
-	wayPoints.push_back(Vector3(150, 80, 1));
-	//Pet Room[3]
 	wayPoints.push_back(Vector3(-150, 80, 1));
+	//Pet Room[3]
+	wayPoints.push_back(Vector3(-450, 80, 1));
 	//Before Toilet/Pet Room[4]
-	wayPoints.push_back(Vector3(0, 80, 1));
+	wayPoints.push_back(Vector3(-300, 80, 1));
 	//////////////////////////////////////////////////////////////////
 	//Couch[5]
-	wayPoints.push_back(Vector3(-120, -63, 1));
+	wayPoints.push_back(Vector3(-420, -63, 1));
 	//Kitchen[6]
-	wayPoints.push_back(Vector3(300, -63, 1));
-	//Before Kitchen/Couch[7]
 	wayPoints.push_back(Vector3(0, -63, 1));
+	//Before Kitchen/Couch[7]
+	wayPoints.push_back(Vector3(-300, -63, 1));
 	//////////////////////////////////////////////////////////////////
 	//Outside[8]
-	wayPoints.push_back(Vector3(450, -230, 1));
+	wayPoints.push_back(Vector3(150, -230, 1));
 	//Before going outside[9]
-	wayPoints.push_back(Vector3(0, -230, 1));
+	wayPoints.push_back(Vector3(-300, -230, 1));
 	//Mouse Hole [10]
-	wayPoints.push_back(Vector3(-380, -150, 1));
+	wayPoints.push_back(Vector3(-680, -150, 1));
 	//Infront of TV [11]
-	wayPoints.push_back(Vector3(-120, -43, 1));
+	wayPoints.push_back(Vector3(-420, -43, 1));
 	//Female side of couch [12]
-	wayPoints.push_back(Vector3(-280, -63, 1));
+	wayPoints.push_back(Vector3(-580, -63, 1));
 	//Female side of bed [13]
-	wayPoints.push_back(Vector3(-120, 220, 1));
+	wayPoints.push_back(Vector3(-420, 220, 1));
 	//Female side of couch [14]
-	wayPoints.push_back(Vector3(-230, -280, 1));
+	wayPoints.push_back(Vector3(-530, -280, 1));
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
@@ -361,6 +361,13 @@ void SceneText::Update(double dt)
 		ss << "Status:NIGHT";
 	}
 	textObj[0]->SetText(ss.str());
+	textObj[0]->SetPosition(Vector3(-275, -285, 1));
+
+	//Message Board
+	/*std::ostringstream s1;
+	s1 << "Message Board : " << messageboard.GetMsg();
+	textObj[1]->SetText(s1.str());
+	textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x - 35, StatusBars[2]->GetPosition().y, StatusBars[2]->GetPosition().z + 1));*/
 
 	//Mouse stats
 	//std::ostringstream s1;
@@ -428,7 +435,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-	}
+}
 
 	// Delete the lights
 	delete lights[0];

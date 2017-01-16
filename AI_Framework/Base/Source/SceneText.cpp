@@ -147,10 +147,10 @@ void SceneText::Init()
 	WorldObj[4] = Create::Sprite2DObject("Mouse", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 
 	//Creating the status bar for each AI
-	for (int i = 0; i < 5; ++i)
-	{
-		StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
-	}
+	//for (int i = 0; i < 4; ++i)
+	//{
+	//	StatusBars[i] = Create::Sprite2DObject("StatusBar", Vector3(0.0f, 0.0f, 1.0f), Vector3(130.0f, 25.0f, 1.0f));
+	//}
 
 	FSMInit();
 
@@ -195,10 +195,7 @@ void SceneText::FSMInit()
 	//Day/Night Cycle
 	DAY = true;
 	NIGHT = false;
-	TVon = false;
-
 	Time = 0;
-	TimePast = 0;
 
 	//Waypoint Init
 	//Starting Position[0]
@@ -237,30 +234,20 @@ void SceneText::FSMInit()
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
-	MaleState = SLEEP;
-	MaleWork = false;
-	MaleSleep = false;
-	Male.m_bowel = 0;
-	Male.m_hunger = 100;
+	MaleState = IDLE;
 
 	//Female Init
 	WorldObj[2]->SetPosition(wayPoints[12]);
 	FemaleState = IDLE;
-	Female.m_bowel = 0;
-	Female.m_entertain = 100;
-	Female.m_hunger = 0;
 
 	//Mouse Init
 	WorldObj[4]->SetPosition(wayPoints[10]);
 	MouseState = HIDE;
 	RanMousePos();
-	Mouse.m_hunger = 0;
 
 	//Cat Init
 	CatState = IDLE;
 	WorldObj[3]->SetPosition(wayPoints[5]);
-	Cat.m_hunger = 100;
-	Cat.m_bowel = 0;
 }
 
 //Ai FSM Update Here
@@ -289,486 +276,55 @@ void SceneText::RunFSM(double dt)
 		}
 		Time = 0;
 	}
-
-	TimePast += dt;
-
-	//Mouse Stats control
-	if (Mouse.m_hunger >= 100)
-	{
-		Mouse.m_hunger = 100;
-	}
-	else if (Mouse.m_hunger <= 0)
-	{
-		Mouse.m_hunger = 0;
-	}
-
-	//Every 5s
-	if (TimePast >= 5)
-	{
-		//Female stats
-		if (FemaleState == WATCH && WorldObj[2]->ReachPos(wayPoints[12]))
-		{
-			Female.m_entertain += 20;
-		}
-		else
-		{
-			Female.m_entertain -= 10;
-		}
-
-		if (FemaleState == SHIT && WorldObj[2]->ReachPos(wayPoints[2]))
-		{
-			Female.m_bowel -= 30;
-		}
-
-		if (FemaleState == EAT)
-		{
-			if (WorldObj[2]->ReachPos(wayPoints[6]))
-			{
-				Female.m_bowel += 10;
-				Female.m_hunger -= 10;
-			}
-		}
-		else
-		{
-			Female.m_hunger += 20;
-		}
-
-		//Mouse stats
-		if (MouseState == EAT)
-		{
-			Mouse.m_hunger -= 10;
-		}
-		else
-		{
-			Mouse.m_hunger += 5;
-		}
-
-		//Cat stats
-		if (CatState == EAT)
-			Cat.m_hunger += 20;
-		else
-			Cat.m_hunger -= 10;
-
-		if (CatState == SHIT)
-			Cat.m_bowel -= 45;
-		else
-			Cat.m_bowel += 15;
-
-		//Male Stats
-		if (DAY == true)
-		{
-			if (MaleWork == false)
-			{
-				if (MaleState == EAT)
-					Male.m_hunger += 20;
-
-				if (MaleState == SHIT)
-					Male.m_bowel -= 50;
-			}
-			if (MaleWork == true)
-			{
-				Male.m_hunger -= 10;
-				Male.m_bowel += 10;
-			}
-		}
-		else if (NIGHT == true)
-		{
-			if (MaleSleep == false)
-			{
-				if (MaleState == EAT)
-					Male.m_hunger += 30;
-
-				if (MaleState == SHIT)
-					Male.m_bowel -= 50;
-			}
-			if (MaleSleep == true)
-			{
-				Male.m_hunger -= 20;
-				Male.m_bowel += 20;
-			}
-		}
-
-		TimePast = 0;
-	}
 }
 
 void SceneText::MouseFSMUpdate()
 {
-	switch (MouseState)
-	{
-	case ROAM:
-		if (DAY)
-			MouseState = HIDE;
-		else
-		{
-			if (Mouse.m_hunger >= 80)
-				MouseState = EAT;
-		}
-		break;
-
-	case HIDE:
-		if (NIGHT)
-			MouseState = ROAM;
-		break;
-
-	case EAT:
-		if (DAY)
-			MouseState = HIDE;
-		else
-		{
-			if (Mouse.m_hunger < 50)
-				MouseState = ROAM;
-		}
-		break;
-	}
 }
 
 void SceneText::MouseRespond()
 {
 	MouseFSMUpdate();
-	switch (MouseState)
-	{
-	case ROAM:
-		if (WorldObj[4]->ReachPos(MouseNewPos))
-		{
-			RanMousePos();
-		}
-		else
-		{
-			WorldObj[4]->MovePos(MouseNewPos, 1);
-		}
-		break;
 
-	case HIDE:
-		WorldObj[4]->MovePos(wayPoints[10], 3);
-		break;
-
-	case EAT:
-		WorldObj[4]->MovePos(wayPoints[6], 2);
-		break;
-	}
-
-	StatusBars[2]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 45, WorldObj[4]->GetPosition().z));
+	//StatusBars[2]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 45, WorldObj[4]->GetPosition().z));
 }
 
 void SceneText::FemaleFSMUpdate()
 {
-	//importance of action: SHIT->EAT->CLEAN->WATCH
-	switch (FemaleState)
-	{
-	case IDLE:
-		if (DAY)
-		{
-			if (Female.m_bowel >= 80 || Female.m_hunger >= 80) //Female hungry or needs to go toilet
-			{
-				if (Female.m_bowel > Female.m_hunger)
-					FemaleState = SHIT;
-				else
-					FemaleState = EAT;
-			}
-			else //Female's hunger and bowel are normal
-			{
-				if (Female.m_entertain <= 40)
-					FemaleState = WATCH;
-			}
-		}
-		else
-			FemaleState = SLEEP;
-		break;
-
-	case EAT:
-		if (DAY)
-		{
-			if (Female.m_bowel >= 80 && Female.m_bowel > Female.m_hunger) //Female needs to go to the toilet more than she needs to eat
-			{
-				FemaleState = SHIT;
-			}
-
-			if (Female.m_entertain <= 40 && Female.m_hunger <= 20 && Female.m_bowel < 80) //Female's hunger and bowel are normal, needs entertainment
-			{
-				FemaleState = WATCH;
-			}
-
-			if (Female.m_bowel < 80 && Female.m_entertain > 40 && Female.m_hunger < 80) //Female's stats are normal
-			{
-				FemaleState = IDLE;
-			}
-		}
-		else
-		{
-			if (Female.m_hunger < 100) //Female not dying from hunger
-				FemaleState = SLEEP;
-		}
-		break;
-
-	case SHIT:
-		if (Female.m_bowel < 80) //Female's bowel is normal
-		{
-			if (DAY)
-			{
-				if (Female.m_hunger >= 80) //Hungry
-				{
-					FemaleState = EAT;
-				}
-				else //Not hungry
-				{
-					if (Female.m_entertain <= 40) //Bored
-						FemaleState = WATCH;
-					else
-						FemaleState = IDLE;
-				}
-			}
-			else
-			{
-				FemaleState = SLEEP;
-			}
-		}
-
-		break;
-
-	case WATCH:
-		if (DAY)
-		{
-			if (Female.m_hunger >= 80 || Female.m_bowel >= 80)
-			{
-				if (Female.m_bowel > Female.m_hunger) //see if Female is more urgent to eat or go to the toilet
-					FemaleState = SHIT;
-				else
-					FemaleState = EAT;
-			}
-			else
-			{
-				if (Female.m_entertain > 40) // Female's stats are back to normal
-					FemaleState = IDLE;
-			}
-		}
-		else
-			FemaleState = SLEEP;
-		break;
-
-	case SLEEP:
-		if (DAY)
-			FemaleState = IDLE;
-		break;
-	}
 }
 
 void SceneText::FemaleRespond()
 {
 	FemaleFSMUpdate();
 
-	if (FemaleState == WATCH)
-	{
-		if (TVon)
-		{
-			WorldObj[2]->MovePos(wayPoints[12], 1); //tv is on, go to couch
-		}
-		else
-		{
-			WorldObj[2]->MovePos(wayPoints[11], 1); //on tv
-			if (WorldObj[2]->GetPosition() == wayPoints[11])
-				TVon = true;
-		}
-	}
-	else //not watching tv
-	{
-		if (TVon) //tv is on
-		{
-			WorldObj[2]->MovePos(wayPoints[11], 1); //off tv
-			TVon = false;
-		}
-		else //tv is off
-		{
-			switch (FemaleState)
-			{
-			case IDLE:
-				if (WorldObj[2]->GetPosition() != wayPoints[12])
-				{
-					//move to couch to wait for something to do
-					WorldObj[2]->MovePos(wayPoints[12], 1);
-				}
-				break;
-
-			case EAT:
-				WorldObj[2]->MovePos(wayPoints[6], 1);
-				break;
-
-			case SHIT:
-				WorldObj[2]->MovePos(wayPoints[2], 1);
-				break;
-
-			case SLEEP:
-				WorldObj[2]->MovePos(wayPoints[13], 1);
-				break;
-			}
-		}
-	}
-
-	StatusBars[3]->SetPosition(Vector3(WorldObj[2]->GetPosition().x, WorldObj[2]->GetPosition().y + 45, WorldObj[2]->GetPosition().z));
+	//StatusBars[3]->SetPosition(Vector3(WorldObj[2]->GetPosition().x, WorldObj[2]->GetPosition().y + 45, WorldObj[2]->GetPosition().z));
 }
 
 void SceneText::CatRespond()
 {
 	CatFSMUpdate();
-	switch (CatState)
-	{
-	case IDLE:
-		//Go to couch
-		WorldObj[3]->MovePos(wayPoints[5], 2);
-		break;
-	case EAT:
-		//Go to kitchen
-		WorldObj[3]->MovePos(wayPoints[6], 2);
-		break;
-	case SLEEP:
-		//Go to pet room
-		WorldObj[3]->MovePos(wayPoints[3], 2);
-		break;
-	case SHIT:
-		//Go to toilet
-		WorldObj[3]->MovePos(wayPoints[2], 2);
-		break;
-	}
-	StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
+
+	//StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
 }
 
 void SceneText::CatFSMUpdate()
 {
-	if (DAY == true)
-	{
-		switch (CatState)
-		{
-		case IDLE:
-			if (Cat.m_hunger <= 90)
-				CatState = EAT;
-			else if (Cat.m_bowel >= 45)
-				CatState = SHIT;
-			break;
-		case EAT:
-			if (Cat.m_hunger >= 100)
-				CatState = IDLE;
-			break;
-		case SLEEP:
-			//Dont do anything while sleeping
-			CatState = IDLE;
-			break;
-		case SHIT:
-			if (Cat.m_bowel <= 0)
-				CatState = IDLE;
-			break;
-		}
-	}
-	else if (NIGHT == true)
-	{
-		CatState = SLEEP;
-		Cat.m_hunger = 100;
-		Cat.m_bowel = 0;
-	}
 }
 
 void SceneText::ManRespond()
 {
 	ManFSMUpdate();
-	switch (MaleState)
-	{
-	case IDLE:
-		//Before Kitchen/Couch
-		WorldObj[1]->MovePos(wayPoints[7], 2);
-		break;
-	case EAT:
-		//Go to kitchen
-		WorldObj[1]->MovePos(wayPoints[6], 2);
-		break;
-	case SLEEP:
-		//Go to bedroom
-		WorldObj[1]->MovePos(wayPoints[1], 2);
-		break;
-	case SHIT:
-		//Go to toilet
-		WorldObj[1]->MovePos(wayPoints[2], 2);
-		break;
-	case WORK:
-		//Go to work
-		WorldObj[1]->MovePos(wayPoints[8], 2);
-		break;
-	}
-	StatusBars[1]->SetPosition(Vector3(WorldObj[1]->GetPosition().x, WorldObj[1]->GetPosition().y + 45, WorldObj[1]->GetPosition().z));
+
+	//StatusBars[1]->SetPosition(Vector3(WorldObj[1]->GetPosition().x, WorldObj[1]->GetPosition().y + 45, WorldObj[1]->GetPosition().z));
 }
 
 void SceneText::ManFSMUpdate()
 {
-	//If its in the morning
-	if (DAY == true)
-	{
-		//#Logic
-		switch (MaleState)
-		{
-		case IDLE:
-			MaleSleep = false;
-			MaleWork = false;
-			if (Male.m_hunger <= 50)
-				MaleState = EAT;
-			else if (Male.m_bowel >= 50)
-				MaleState = SHIT;
-			else
-				MaleState = WORK;
-			break;
-		case EAT:
-			if (Male.m_hunger >= 100)
-				MaleState = IDLE;
-			break;
-		case SLEEP:
-			MaleState = IDLE;
-			break;
-		case WORK:
-			MaleWork = true;
-			break;
-		case SHIT:
-			if (Male.m_bowel <= 0)
-				MaleState = IDLE;
-			break;
-		}
-	}
-	//If it's at night
-	else if (NIGHT == true)
-	{
-		switch (MaleState)
-		{
-		case IDLE:
-			MaleSleep = false;
-			MaleWork = false;
-			if (Male.m_hunger <= 90)
-				MaleState = EAT;
-			else if (Male.m_bowel >= 50)
-				MaleState = SHIT;
-			else
-				MaleState = SLEEP;
-			break;
-		case EAT:
-			if (Male.m_hunger >= 100)
-				MaleState = IDLE;
-			break;
-		case SLEEP:
-			MaleSleep = true;
-			break;
-		case SHIT:
-			if (Male.m_bowel <= 0)
-				MaleState = IDLE;
-			break;
-		case WORK:
-			//AI came back from work
-			MaleState = IDLE;
-			break;
-		}
-	}
 }
 
 //How the AI should respond + Effects will be seen
 void SceneText::Respond()
 {
-	//TV status
-	StatusBars[4]->SetPosition(wayPoints[14]);
-
 	MouseRespond();
 	FemaleRespond();
 	CatRespond();
@@ -807,70 +363,36 @@ void SceneText::Update(double dt)
 	textObj[0]->SetText(ss.str());
 
 	//Mouse stats
-	std::ostringstream s1;
-	if (MouseState == ROAM)
-		s1 << "Roam";
-	else if (MouseState == EAT)
-		s1 << "Eat";
-	else if (MouseState == HIDE)
-		s1 << "Hide";
+	//std::ostringstream s1;
+	//if (MouseState == ROAM)
+	//	s1 << "Roam";
 
-	textObj[1]->SetText(s1.str());
-	textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x - 35, StatusBars[2]->GetPosition().y, StatusBars[2]->GetPosition().z + 1));
+	//textObj[1]->SetText(s1.str());
+	//textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x - 35, StatusBars[2]->GetPosition().y, StatusBars[2]->GetPosition().z + 1));
 
-	//Female stats
-	std::ostringstream s4;
-	if (FemaleState == IDLE)
-		s4 << "Idle";
-	else if (FemaleState == EAT)
-		s4 << "Eat";
-	else if (FemaleState == SHIT)
-		s4 << "Shit";
-	else if (FemaleState == SLEEP)
-		s4 << "Sleep";
-	else if (FemaleState == WATCH)
-		s4 << "Watch Tv";
+	////Female stats
+	//std::ostringstream s4;
+	//if (FemaleState == IDLE)
+	//	s4 << "Idle";
 
-	textObj[4]->SetText(s4.str());
-	textObj[4]->SetPosition(Vector3(StatusBars[3]->GetPosition().x - 45, StatusBars[3]->GetPosition().y, StatusBars[3]->GetPosition().z + 1));
+	//textObj[4]->SetText(s4.str());
+	//textObj[4]->SetPosition(Vector3(StatusBars[3]->GetPosition().x - 45, StatusBars[3]->GetPosition().y, StatusBars[3]->GetPosition().z + 1));
 
-	//Cat Stats
-	std::ostringstream s2;
-	if (CatState == IDLE)
-		s2 << "Idle";
-	else if (CatState == EAT)
-		s2 << "Eat";
-	else if (CatState == SHIT)
-		s2 << "Shit";
-	else if (CatState == SLEEP)
-		s2 << "Sleep";
-	//Update position of the string with the status bar
-	textObj[2]->SetText(s2.str());
-	textObj[2]->SetPosition(Vector3(StatusBars[0]->GetPosition().x - 45, StatusBars[0]->GetPosition().y, StatusBars[0]->GetPosition().z + 1));
+	////Cat Stats
+	//std::ostringstream s2;
+	//if (CatState == IDLE)
+	//	s2 << "Idle";
+	////Update position of the string with the status bar
+	//textObj[2]->SetText(s2.str());
+	//textObj[2]->SetPosition(Vector3(StatusBars[0]->GetPosition().x - 45, StatusBars[0]->GetPosition().y, StatusBars[0]->GetPosition().z + 1));
 
-	//Male Stats
-	std::ostringstream s3;
-	if (MaleState == IDLE)
-		s3 << "Idle";
-	else if (MaleState == EAT)
-		s3 << "Eat";
-	else if (MaleState == SHIT)
-		s3 << "Shit";
-	else if (MaleState == SLEEP)
-		s3 << "Sleep";
-	else if (MaleState == WORK)
-		s3 << "Work";
-	//Update position of the string with the status bar
-	textObj[3]->SetText(s3.str());
-	textObj[3]->SetPosition(Vector3(StatusBars[1]->GetPosition().x - 45, StatusBars[1]->GetPosition().y, StatusBars[1]->GetPosition().z + 1));
-
-	std::ostringstream s5;
-	if (TVon)
-		s5 << "On";
-	else
-		s5 << "Off";
-	textObj[5]->SetText(s5.str());
-	textObj[5]->SetPosition(wayPoints[14] + Vector3(-30, -4, 2));
+	////Male Stats
+	//std::ostringstream s3;
+	//if (MaleState == IDLE)
+	//	s3 << "Idle";
+	////Update position of the string with the status bar
+	//textObj[3]->SetText(s3.str());
+	//textObj[3]->SetPosition(Vector3(StatusBars[1]->GetPosition().x - 45, StatusBars[1]->GetPosition().y, StatusBars[1]->GetPosition().z + 1));
 
 	FSMUpdate(dt);
 }

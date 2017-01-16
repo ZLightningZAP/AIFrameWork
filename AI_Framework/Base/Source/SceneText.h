@@ -11,6 +11,7 @@
 #include "GenericEntity.h"
 #include <vector>
 #include "MyMath.h"
+#include "MessageBoard.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -35,31 +36,15 @@ public:
 	bool DAY;
 	bool NIGHT;
 	double Time;
-	//if TV is on
-	bool TVon;
-	double TimePast;
 
-	struct Character{
-		int m_hunger;
-		int m_bowel;
-		int m_entertain;
+	struct Character {
 	};
 
-	struct Cleaniness{
-		int r_bedroom;
-		int r_pet;
-		int r_kitchen;
-		int r_toilet;
-	};
-
-	enum Actions{
+	enum Actions {
 		IDLE, //all characters
-		EAT, //all characters
-		SHIT, //female, male, cat
 		SLEEP, //female, male, cat
-		WORK, //male
-		CLEAN, //female
-		WATCH, //female
+		SCREAM, //female
+		CHASE, //cat
 		HIDE, //mouse
 		ROAM //mouse
 	};
@@ -73,9 +58,6 @@ public:
 	int MaleState;
 	int CatState;
 	int MouseState;
-
-	bool MaleWork;
-	bool MaleSleep;
 
 	int MousePos;
 	Vector3 MouseNewPos;

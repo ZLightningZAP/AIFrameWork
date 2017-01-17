@@ -140,7 +140,7 @@ void SceneText::Init()
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
-	Create::Sprite2DObject("Background", Vector3(-300.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
+	Create::Sprite2DObject("Background", Vector3(-400.0f, 0.0f, 0.0f), Vector3(800.0f, 600.0f, 0.0f));
 	WorldObj[1] = Create::Sprite2DObject("Male", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 	WorldObj[2] = Create::Sprite2DObject("Female", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
 	WorldObj[3] = Create::Sprite2DObject("Cat", Vector3(0.0f, 0.0f, 1.0f), Vector3(50.0f, 50.0f, 1.0f));
@@ -157,13 +157,13 @@ void SceneText::Init()
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
-	float fontSize = 25.0f;
+	float fontSize = 24.0f;
 	float halfFontSize = fontSize / 2.0f;
 	//textObj[0] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	//textObj[1] = Create::Text2DObject("mouse state", Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 2, WorldObj[4]->GetPosition().z), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	for (int i = 0; i < 6; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 1.1f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
+		textObj[i] = Create::Text2DObject("text", Vector3(0, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 	}
 	//textObj[0]->SetText("HELLO WORLD");
 }
@@ -201,36 +201,36 @@ void SceneText::FSMInit()
 	//Starting Position[0]
 	wayPoints.push_back(Vector3(1, 1, 1));
 	//Bedroom[1]
-	wayPoints.push_back(Vector3(-300, 220, 1));
+	wayPoints.push_back(Vector3(-400, 220, 1));
 	//////////////////////////////////////////////////////////////////
 	//Toilet[2]
-	wayPoints.push_back(Vector3(-150, 80, 1));
+	wayPoints.push_back(Vector3(-250, 80, 1));
 	//Pet Room[3]
-	wayPoints.push_back(Vector3(-450, 80, 1));
+	wayPoints.push_back(Vector3(-550, 80, 1));
 	//Before Toilet/Pet Room[4]
-	wayPoints.push_back(Vector3(-300, 80, 1));
+	wayPoints.push_back(Vector3(-400, 80, 1));
 	//////////////////////////////////////////////////////////////////
 	//Couch[5]
-	wayPoints.push_back(Vector3(-420, -63, 1));
+	wayPoints.push_back(Vector3(-520, -63, 1));
 	//Kitchen[6]
-	wayPoints.push_back(Vector3(0, -63, 1));
+	wayPoints.push_back(Vector3(-100, -63, 1));
 	//Before Kitchen/Couch[7]
-	wayPoints.push_back(Vector3(-300, -63, 1));
+	wayPoints.push_back(Vector3(-400, -63, 1));
 	//////////////////////////////////////////////////////////////////
 	//Outside[8]
-	wayPoints.push_back(Vector3(150, -230, 1));
+	wayPoints.push_back(Vector3(50, -230, 1));
 	//Before going outside[9]
-	wayPoints.push_back(Vector3(-300, -230, 1));
+	wayPoints.push_back(Vector3(-400, -230, 1));
 	//Mouse Hole [10]
-	wayPoints.push_back(Vector3(-680, -150, 1));
+	wayPoints.push_back(Vector3(-780, -150, 1));
 	//Infront of TV [11]
-	wayPoints.push_back(Vector3(-420, -43, 1));
+	wayPoints.push_back(Vector3(-520, -43, 1));
 	//Female side of couch [12]
-	wayPoints.push_back(Vector3(-580, -63, 1));
+	wayPoints.push_back(Vector3(-680, -63, 1));
 	//Female side of bed [13]
-	wayPoints.push_back(Vector3(-420, 220, 1));
+	wayPoints.push_back(Vector3(-520, 220, 1));
 	//Female side of couch [14]
-	wayPoints.push_back(Vector3(-530, -280, 1));
+	wayPoints.push_back(Vector3(-630, -280, 1));
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
@@ -361,13 +361,23 @@ void SceneText::Update(double dt)
 		ss << "Status:NIGHT";
 	}
 	textObj[0]->SetText(ss.str());
-	textObj[0]->SetPosition(Vector3(-275, -285, 1));
+	textObj[0]->SetPosition(Vector3(0, 280, 2));
 
 	//Message Board
-	/*std::ostringstream s1;
-	s1 << "Message Board : " << messageboard.GetMsg();
+	std::ostringstream s1;
+	s1 << "MessageBoard:" << messageboard.GetMsg();
 	textObj[1]->SetText(s1.str());
-	textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x - 35, StatusBars[2]->GetPosition().y, StatusBars[2]->GetPosition().z + 1));*/
+	textObj[1]->SetPosition(Vector3(StatusBars[2]->GetPosition().x, StatusBars[2]->GetPosition().y + 240, StatusBars[2]->GetPosition().z + 2));
+
+	std::ostringstream s2;
+	s2 << "From:" << messageboard.GetFromLabel();
+	textObj[2]->SetText(s2.str());
+	textObj[2]->SetPosition(Vector3(StatusBars[2]->GetPosition().x, StatusBars[2]->GetPosition().y + 200, StatusBars[2]->GetPosition().z + 2));
+
+	std::ostringstream s3;
+	s3 << "To:" << messageboard.GetToLabel();
+	textObj[3]->SetText(s3.str());
+	textObj[3]->SetPosition(Vector3(StatusBars[2]->GetPosition().x, StatusBars[2]->GetPosition().y + 160, StatusBars[2]->GetPosition().z + 2));
 
 	//Mouse stats
 	//std::ostringstream s1;

@@ -36,6 +36,8 @@ public:
 	bool DAY;
 	bool NIGHT;
 	double Time;
+	double countdown;
+	double count;
 
 	struct Character {
 	};
@@ -44,6 +46,7 @@ public:
 		IDLE, //all characters
 		SLEEP, //female, male, cat
 		SCREAM, //female
+		PAT, //female
 		CHASE, //cat
 		HIDE, //mouse
 		ROAM //mouse
@@ -59,7 +62,10 @@ public:
 	int CatState;
 	int MouseState;
 
-	int MousePos;
+	bool meow;
+	int m_MousePos;
+	int m_MouseProb;
+	bool MouseOut;
 	Vector3 MouseNewPos;
 	MessageBoard messageboard;
 
@@ -88,6 +94,7 @@ private:
 	void Respond();
 
 	void RanMousePos();
+	void MouseProb();
 	void MouseRespond();
 	void MouseFSMUpdate();
 	void FemaleRespond();

@@ -46,7 +46,9 @@ public:
 		SCREAM, //female
 		CHASE, //cat
 		HIDE, //mouse
-		ROAM //mouse
+		ROAM, //mouse
+		ASKTOSLEEP, //cat
+		WAKEUP //cat
 	};
 
 	Character Female;
@@ -62,6 +64,10 @@ public:
 	int MousePos;
 	Vector3 MouseNewPos;
 	MessageBoard messageboard;
+
+	bool catgoingtosleep;
+	double catmovetosleep;
+	bool catalreadysleeping;
 
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager

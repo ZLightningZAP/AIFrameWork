@@ -193,15 +193,19 @@ void SceneText::RanMousePos()
 void SceneText::FSMInit()
 {
 	//Day/Night Cycle
-	DAY = true;
-	NIGHT = false;
+	DAY = false;
+	NIGHT = true;
 	Time = 0;
+
+	catgoingtosleep = false;
+	catmovetosleep = 0;
+	catalreadysleeping = false;
 
 	//Waypoint Init
 	//Starting Position[0]
 	wayPoints.push_back(Vector3(1, 1, 1));
-	//Bedroom[1]
-	wayPoints.push_back(Vector3(-400, 220, 1));
+	//Male position on the bed [1]
+	wayPoints.push_back(Vector3(-400, 250, 1));
 	//////////////////////////////////////////////////////////////////
 	//Toilet[2]
 	wayPoints.push_back(Vector3(-250, 80, 1));
@@ -228,9 +232,13 @@ void SceneText::FSMInit()
 	//Female side of couch [12]
 	wayPoints.push_back(Vector3(-680, -63, 1));
 	//Female side of bed [13]
-	wayPoints.push_back(Vector3(-520, 220, 1));
+	wayPoints.push_back(Vector3(-500, 250, 1));
 	//Female side of couch [14]
 	wayPoints.push_back(Vector3(-630, -280, 1));
+	//Cat asking for bed [15]
+	wayPoints.push_back(Vector3(-580, 220, 1));
+	//Cat position on bed [16]
+	wayPoints.push_back(Vector3(-450, 190, 1));
 
 	//Male Init
 	WorldObj[1]->SetPosition(wayPoints[1]);
@@ -276,6 +284,19 @@ void SceneText::RunFSM(double dt)
 		}
 		Time = 0;
 	}
+
+	//Timer for cat to move to sleeping to sleep
+	if (catgoingtosleep == true)
+	{
+		catmovetosleep += dt;
+		if (catmovetosleep >= 5 && catalreadysleeping == false)
+		{
+			CatState = SLEEP;
+			catmovetosleep = 0;
+			catalreadysleeping = true;
+			messageboard.Reset();
+		}
+	}
 }
 
 void SceneText::MouseFSMUpdate()
@@ -291,6 +312,15 @@ void SceneText::MouseRespond()
 
 void SceneText::FemaleFSMUpdate()
 {
+	//Second FSM
+	if (NIGHT == true)
+	{
+		if (messageboard.GetMsg() == "I Want To Sleep Here" && catgoingtosleep == false)
+		{
+			catgoingtosleep = true;
+		}
+	}
+
 }
 
 void SceneText::FemaleRespond()
@@ -303,12 +333,45 @@ void SceneText::FemaleRespond()
 void SceneText::CatRespond()
 {
 	CatFSMUpdate();
-
+	switch (CatState)
+	{
+	case ASKTOSLEEP:
+		//Move beside bed
+		WorldObj[3]->MovePos(wayPoints[15], 2);
+		break;
+	case SLEEP:
+		// Move onto bed
+		WorldObj[3]->MovePos(wayPoints[16], 2);
+		break;
+	case WAKEUP:
+		catgoingtosleep = false;
+		catmovetosleep = 0;
+		catalreadysleeping = false;
+		//Move to couch
+		WorldObj[3]->MovePos(wayPoints[5], 2);
+		break;
+	default:
+		break;
+	}
 	//StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
 }
 
 void SceneText::CatFSMUpdate()
 {
+	if (DAY == true)
+	{
+		CatState = WAKEUP;
+	}
+	if (NIGHT == true)
+	{
+		if (catgoingtosleep == false && catalreadysleeping == false)
+		{
+			CatState = ASKTOSLEEP;
+			messageboard.SetMessage("I Want To Sleep Here");
+			messageboard.SetFromLabel("Cat");
+			messageboard.SetToLabel("Female");
+		}
+	}
 }
 
 void SceneText::ManRespond()

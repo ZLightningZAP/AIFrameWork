@@ -193,8 +193,8 @@ void SceneText::RanMousePos()
 void SceneText::FSMInit()
 {
 	//Day/Night Cycle
-	DAY = false;
-	NIGHT = true;
+	DAY = true;
+	NIGHT = false;
 	Time = 0;
 
 	catgoingtosleep = false;

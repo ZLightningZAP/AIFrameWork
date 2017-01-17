@@ -171,9 +171,8 @@ void SceneText::Init()
 void SceneText::RanMousePos()
 {
 	//Randomise where mouse goes
-	m_MousePos = 0;
-	m_MousePos = rand() % 3;
-	switch (m_MousePos)
+	MousePos = rand() % 3;
+	switch (MousePos)
 	{
 	case 0:
 		MouseNewPos = wayPoints[0];
@@ -190,19 +189,6 @@ void SceneText::RanMousePos()
 	}
 }
 
-void SceneText::MouseProb()
-{
-	m_MouseProb = rand() % 3;
-	if (m_MouseProb > 2 || m_MouseProb == 2)
-	{
-		MouseOut = false;
-	}
-	else
-	{
-		MouseOut = true;
-	}
-}
-
 //All AI Init Here
 void SceneText::FSMInit()
 {
@@ -210,8 +196,6 @@ void SceneText::FSMInit()
 	DAY = true;
 	NIGHT = false;
 	Time = 0;
-	countdown = 0;
-	count = 0;
 
 	//Waypoint Init
 	//Starting Position[0]
@@ -260,11 +244,9 @@ void SceneText::FSMInit()
 	WorldObj[4]->SetPosition(wayPoints[10]);
 	MouseState = HIDE;
 	RanMousePos();
-	MouseOut = false;
 
 	//Cat Init
 	CatState = IDLE;
-	meow = false;
 	WorldObj[3]->SetPosition(wayPoints[5]);
 }
 
@@ -279,17 +261,8 @@ void SceneText::FSMUpdate(double dt)
 //Run in real time
 void SceneText::RunFSM(double dt)
 {
-	if (FemaleState == IDLE && MouseState == ROAM)
-	{
-		countdown += dt;
-	}
-	if (MouseState == HIDE)
-	{
-		count += dt;
-	}
-
 	Time += dt;
-	if (Time >= 20)
+	if (Time >= 30)
 	{
 		if (DAY == true)
 		{
@@ -307,149 +280,35 @@ void SceneText::RunFSM(double dt)
 
 void SceneText::MouseFSMUpdate()
 {
-	switch (MouseState)
-	{
-	case ROAM:
-	{
-		if (NIGHT)
-		{
-			MouseOut = false;
-			MouseState = HIDE;
-		}
-		else
-		{
-			if (messageboard.GetFromLabel() == "Woman" && messageboard.GetMsg() == "SCREAM")
-			{
-				count = 0;
-				MouseState = HIDE;
-			}
-		}
-	}
-
-	break;
-
-	case HIDE:
-		if (DAY)
-		{
-			if (count > 9)
-			{
-				MouseProb();
-				if (MouseOut)
-					MouseState = ROAM;
-			}
-		}
-		break;
-	}
 }
+
 void SceneText::MouseRespond()
 {
 	MouseFSMUpdate();
-	switch (MouseState)
-	{
-	case ROAM:
-		if (WorldObj[4]->ReachPos(MouseNewPos))
-		{
-			RanMousePos();
-		}
-		else
-		{
-			WorldObj[4]->MovePos(MouseNewPos, 1);
-		}
 
-		break;
-
-	case HIDE:
-		WorldObj[4]->MovePos(wayPoints[10], 3);
-		break;
-	}
 	//StatusBars[2]->SetPosition(Vector3(WorldObj[4]->GetPosition().x, WorldObj[4]->GetPosition().y + 45, WorldObj[4]->GetPosition().z));
 }
 
 void SceneText::FemaleFSMUpdate()
 {
-	switch (FemaleState)
-	{
-	case IDLE:
-		if (MouseOut && countdown >= 3)
-		{
-			if (MouseState != HIDE)
-			{
-				FemaleState = SCREAM;
-			}
-		}
-		break;
-
-	case SCREAM:
-	{
-		countdown = 0;
-		if (!MouseOut)
-			FemaleState = PAT;
-	}
-	break;
-
-	case PAT:
-		if (meow)
-		{
-			FemaleState = IDLE;
-		}
-	}
 }
 
 void SceneText::FemaleRespond()
 {
 	FemaleFSMUpdate();
 
-	switch (FemaleState)
-	{
-	case SCREAM:
-	{
-		if (MouseState != HIDE)
-		{
-			messageboard.SetMessage("SCREAM");
-			messageboard.SetFromLabel("Woman");
-			messageboard.SetToLabel("Cat");
-		}
-	}
-	break;
-	}
 	//StatusBars[3]->SetPosition(Vector3(WorldObj[2]->GetPosition().x, WorldObj[2]->GetPosition().y + 45, WorldObj[2]->GetPosition().z));
 }
 
 void SceneText::CatRespond()
 {
 	CatFSMUpdate();
-	switch (CatState)
-	{
-	case IDLE:
-		WorldObj[3]->MovePos(wayPoints[5], 2);
-		break;
 
-	case CHASE:
-		WorldObj[3]->MovePos(WorldObj[4]->GetPosition(), 3);
-		break;
-	}
 	//StatusBars[0]->SetPosition(Vector3(WorldObj[3]->GetPosition().x, WorldObj[3]->GetPosition().y + 45, WorldObj[3]->GetPosition().z));
 }
 
 void SceneText::CatFSMUpdate()
 {
-	switch (CatState)
-	{
-	case IDLE:
-		if (messageboard.GetToLabel() == "Cat" && messageboard.GetFromLabel() == "Woman")
-		{
-			CatState = CHASE;
-		}
-		break;
-
-	case CHASE:
-		if (DAY)
-		{
-			if (MouseState == HIDE)
-				CatState = IDLE;
-		}
-		break;
-	}
 }
 
 void SceneText::ManRespond()

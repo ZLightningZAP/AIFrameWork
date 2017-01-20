@@ -48,7 +48,8 @@ public:
 		HIDE, //mouse
 		ROAM, //mouse
 		ASKTOSLEEP, //cat
-		WAKEUP //cat
+		WAKEUP, //cat
+		TAKEDRINK // Male
 	};
 
 	Character Female;
@@ -68,6 +69,12 @@ public:
 	bool catgoingtosleep;
 	double catmovetosleep;
 	bool catalreadysleeping;
+
+	double femaleaskingfordrinktime;
+	bool femaleaskingsent;
+	bool femalesent;
+	double maletakingdrink;
+	bool drinktaken;
 
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
@@ -103,6 +110,8 @@ private:
 	void CatFSMUpdate();
 	void ManRespond();
 	void ManFSMUpdate();
+
+	void MorningReset();
 };
 
 #endif

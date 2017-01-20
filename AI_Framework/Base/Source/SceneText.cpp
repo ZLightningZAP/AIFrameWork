@@ -197,9 +197,17 @@ void SceneText::FSMInit()
 	NIGHT = false;
 	Time = 0;
 
+	//Cat variables initialize
 	catgoingtosleep = false;
 	catmovetosleep = 0;
 	catalreadysleeping = false;
+
+	//Female variables initialize
+	femaleaskingfordrinktime = 0;
+	femaleaskingsent = false;
+	femalesent = false;
+	maletakingdrink = 0;
+	drinktaken = false;
 
 	//Waypoint Init
 	//Starting Position[0]
@@ -239,9 +247,11 @@ void SceneText::FSMInit()
 	wayPoints.push_back(Vector3(-580, 220, 1));
 	//Cat position on bed [16]
 	wayPoints.push_back(Vector3(-450, 190, 1));
+	//Cat position on the couch [17]
+	wayPoints.push_back(Vector3(-600, -63, 1));
 
 	//Male Init
-	WorldObj[1]->SetPosition(wayPoints[1]);
+	WorldObj[1]->SetPosition(wayPoints[5]);
 	MaleState = IDLE;
 
 	//Female Init
@@ -255,7 +265,7 @@ void SceneText::FSMInit()
 
 	//Cat Init
 	CatState = IDLE;
-	WorldObj[3]->SetPosition(wayPoints[5]);
+	WorldObj[3]->SetPosition(wayPoints[17]);
 }
 
 //Ai FSM Update Here
@@ -279,6 +289,7 @@ void SceneText::RunFSM(double dt)
 		}
 		else if (NIGHT == true)
 		{
+			MorningReset();
 			DAY = true;
 			NIGHT = false;
 		}
@@ -297,6 +308,43 @@ void SceneText::RunFSM(double dt)
 			messageboard.Reset();
 		}
 	}
+
+	if (NIGHT == true)
+	{
+		if (femalesent == false)
+		{
+			femaleaskingfordrinktime += dt;
+			if (femaleaskingfordrinktime >= 10 && femaleaskingsent == false)
+			{
+				femaleaskingsent = true;
+			}
+		}
+		if (MaleState == TAKEDRINK)
+		{
+			maletakingdrink += dt;
+			if (maletakingdrink >= 5 && drinktaken == false)
+			{
+				MaleState = SLEEP;
+				drinktaken = true;
+				messageboard.Reset();
+			}
+		}
+	}
+}
+
+void SceneText::MorningReset()
+{
+	//Cat variables initialize
+	catgoingtosleep = false;
+	catmovetosleep = 0;
+	catalreadysleeping = false;
+
+	//Female variables initialize
+	femaleaskingfordrinktime = 0;
+	femaleaskingsent = false;
+	femalesent = false;
+	maletakingdrink = 0;
+	drinktaken = false;
 }
 
 void SceneText::MouseFSMUpdate()
@@ -312,21 +360,43 @@ void SceneText::MouseRespond()
 
 void SceneText::FemaleFSMUpdate()
 {
+	if (DAY == true)
+	{
+		FemaleState = IDLE;
+	}
 	//Second FSM
 	if (NIGHT == true)
 	{
+		FemaleState = SLEEP;
 		if (messageboard.GetMsg() == "I Want To Sleep Here" && catgoingtosleep == false)
 		{
 			catgoingtosleep = true;
 		}
-	}
 
+		if (femaleaskingsent == true && femalesent == false)
+		{
+			messageboard.SetMessage("Honey, i want a drink");
+			messageboard.SetFromLabel("Woman");
+			messageboard.SetToLabel("Man");
+			femalesent = true;
+		}
+	}
 }
 
 void SceneText::FemaleRespond()
 {
 	FemaleFSMUpdate();
-
+	switch (FemaleState)
+	{
+	case IDLE:
+		WorldObj[2]->MovePos(wayPoints[12], 2);
+		break;
+	case SLEEP:
+		WorldObj[2]->MovePos(wayPoints[13], 2);
+		break;
+	default:
+		break;
+	}
 	//StatusBars[3]->SetPosition(Vector3(WorldObj[2]->GetPosition().x, WorldObj[2]->GetPosition().y + 45, WorldObj[2]->GetPosition().z));
 }
 
@@ -348,7 +418,7 @@ void SceneText::CatRespond()
 		catmovetosleep = 0;
 		catalreadysleeping = false;
 		//Move to couch
-		WorldObj[3]->MovePos(wayPoints[5], 2);
+		WorldObj[3]->MovePos(wayPoints[17], 2);
 		break;
 	default:
 		break;
@@ -377,12 +447,38 @@ void SceneText::CatFSMUpdate()
 void SceneText::ManRespond()
 {
 	ManFSMUpdate();
-
+	switch (MaleState)
+	{
+	case IDLE:
+		WorldObj[1]->MovePos(wayPoints[5], 2);
+		break;
+	case SLEEP:
+		WorldObj[1]->MovePos(wayPoints[1], 2);
+		break;
+	case TAKEDRINK:
+		WorldObj[1]->MovePos(wayPoints[6], 2);
+		break;
+	default:
+		break;
+	}
 	//StatusBars[1]->SetPosition(Vector3(WorldObj[1]->GetPosition().x, WorldObj[1]->GetPosition().y + 45, WorldObj[1]->GetPosition().z));
 }
 
 void SceneText::ManFSMUpdate()
 {
+	// During the day time, male will be sitting on the couch
+	if (DAY == true)
+	{
+		MaleState = IDLE;
+	}
+	if (NIGHT == true)
+	{
+		MaleState = SLEEP;
+		if (messageboard.GetMsg() == "Honey, i want a drink")
+		{
+			MaleState = TAKEDRINK;
+		}
+	}
 }
 
 //How the AI should respond + Effects will be seen
@@ -396,23 +492,6 @@ void SceneText::Respond()
 
 void SceneText::Update(double dt)
 {
-	// Update our entities
-	//EntityManager::GetInstance()->Update(dt);
-
-	// Update the player position and other details based on keyboard and mouse inputs
-	//playerInfo->Update(dt);
-
-	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
-	//GraphicsManager::GetInstance()->UpdateLights(dt);
-
-	// Update the 2 text object values.
-	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	//std::ostringstream ss;
-	//ss.precision(5);
-	//float fps = (float)(1.f / dt);
-	//ss << "FPS: " << fps;
-	//textObj[1]->SetText(ss.str());
-
 	//Day/Night Cycle
 	std::ostringstream ss;
 	if (DAY == true)
@@ -508,8 +587,7 @@ void SceneText::Exit()
 
 		cout << "Unable to drop PlayerInfo class" << endl;
 #endif
-}
-
+	}
 	// Delete the lights
 	delete lights[0];
 }

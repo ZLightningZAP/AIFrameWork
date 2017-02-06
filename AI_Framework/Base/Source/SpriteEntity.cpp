@@ -80,7 +80,8 @@ float GetDistance(float x1, float y1, float x2, float y2) { return sqrt((x2 - x1
 void SpriteEntity::MovePos(Vector3 finalpos, float speed)
 {
 	float distance = GetDistance(this->GetPosition().x, this->GetPosition().y, finalpos.x, finalpos.y);
-	if (distance > 1.0f)
+	//if (distance >= 0.6f)
+	if (distance >= speed)
 	{
 		Vector3 currentPos;
 		currentPos = Vector3(this->GetPosition().x, this->GetPosition().y, 1);
@@ -89,12 +90,16 @@ void SpriteEntity::MovePos(Vector3 finalpos, float speed)
 		direction = Vector3(direction.x, direction.y, 0);
 		this->SetPosition(currentPos + direction * speed);
 	}
+	else
+	{
+		this->SetPosition(finalpos);
+	}
 }
 
 bool SpriteEntity::ReachPos(Vector3 finalpos)
 {
 	float distance = GetDistance(this->GetPosition().x, this->GetPosition().y, finalpos.x, finalpos.y);
-	if (distance < 0.4f)
+	if (distance < 0.6f)
 	{
 		return true;
 	}

@@ -44,11 +44,12 @@ public:
 		IDLE, //all characters
 		SLEEP, //female, male, cat
 		SCREAM, //female
+		PAT, //female
 		CHASE, //cat
-		HIDE, //mouse
-		ROAM, //mouse
 		ASKTOSLEEP, //cat
 		WAKEUP, //cat
+		HIDE, //mouse
+		ROAM, //mouse
 		TAKEDRINK // Male
 	};
 
@@ -62,14 +63,24 @@ public:
 	int CatState;
 	int MouseState;
 
+	MessageBoard messageboard;
+
 	int MousePos;
 	Vector3 MouseNewPos;
-	MessageBoard messageboard;
+	int MouseProb;
+	bool MouseOut;
+	bool MouseBack;
+	float TryAgain;
 
 	bool catgoingtosleep;
 	double catmovetosleep;
 	bool catalreadysleeping;
 
+	float reactionTime;
+	int patProb;
+	bool pat;
+	float pattingTime;
+	bool seeMouse;
 	double femaleaskingfordrinktime;
 	bool femaleaskingsent;
 	bool femalesent;
@@ -101,8 +112,11 @@ private:
 	void Respond();
 
 	void RanMousePos();
+	void MouseComeOut();
 	void MouseRespond();
 	void MouseFSMUpdate();
+
+	void RanFemalePat();
 	void FemaleRespond();
 	void FemaleFSMUpdate();
 
